@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
 
-# Load dataset with influencer names
+# load data
 @st.cache_data
 def load_data():
-    return pd.read_csv("influencer_data_final.csv")  # Make sure this file exists
+    return pd.read_csv("datasets\influencer_data_final.csv")  # final file with influencers name as well 
 
 df = load_data()
 
