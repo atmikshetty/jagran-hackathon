@@ -14,24 +14,25 @@ df = load_data()
 # Extract influencer names dynamically
 @st.cache_data
 def get_influencer_names():
-    return list(df["influencer_name"].unique())  # Ensure influencer_name column is present
+    return list(df["influencer_name"].unique())  # last column
 
-# Streamlit UI
+# title
 st.title("📊 Influencer Insights Dashboard")
 
-# Influencer Selection Dropdown
+# dropdown
 influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 
-# Filter Data for Selected Influencer
+# choosing influencer from the dropdown for further analysis
 df_filtered = df[df["influencer_name"] == influencer_name]
 
 st.write(f"### Insights for {influencer_name}")
 
-# 📝 Sentiment Analysis Visualization
-st.subheader("📝 Caption & Comment Sentiment")
+# Sentiment Analysis Visualization
+st.subheader("📄 Caption & Comment Sentiment")
 
 fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
+## no scores for captions yet
 # sns.histplot(df_filtered["caption_score"], bins=10, kde=True, ax=ax[0], color="blue")
 # ax[0].set_title("Caption Sentiment Distribution")
 # ax[0].set_xlabel("Sentiment Score")
@@ -42,7 +43,8 @@ ax[1].set_xlabel("Sentiment Score")
 
 st.pyplot(fig)
 
-# # 🔍 Fact-Check Results
+# # REDO
+# #  Fact-Check Results
 # st.subheader("🔍 Fact-Check Results")
 
 # fact_counts = df_filtered["fact_check_rating"].value_counts()
@@ -54,7 +56,7 @@ st.pyplot(fig)
 
 # st.pyplot(fig)
 
-# 🌍 Theme Analysis (Word Cloud)
+# Theme Analysis (Word Cloud)
 st.subheader("🌍 Theme Analysis")
 
 text = " ".join(df_filtered["text"].dropna())
@@ -67,7 +69,7 @@ if text.strip():
 else:
     st.write("No text available for word cloud.")
 
-# 📈 Engagement Insights (Likes vs Comments)
+# Engagement Insights (Likes vs Comments)
 st.subheader("📈 Likes vs Comments")
 
 fig, ax = plt.subplots(figsize=(6, 4))
@@ -78,4 +80,3 @@ ax.set_title("Likes vs Comments")
 st.pyplot(fig)
 
 st.write("🔥 Powered by Streamlit 🚀")
-
