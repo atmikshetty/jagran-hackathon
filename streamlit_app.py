@@ -5,9 +5,16 @@ from wordcloud import WordCloud
 from textblob import TextBlob
 import spacy
 import re
+import subprocess
 
+# added this 
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    # If the model is missing, install it
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load("en_core_web_sm")
 
-nlp = spacy.load("en_core_web_sm")
 
 @st.cache_data
 def load_data():
