@@ -6,7 +6,7 @@ textblob
 spacy==3.5.0
 thinc==8.1.0
 scipy
-numpy==1.23.5
+numpy>1.23.5
 matplotlib
 requests
 regex
