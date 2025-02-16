@@ -11,3 +11,6 @@ tqdm
 requests
 nltk
 instagrapi
+plotly
+spacy
+textblob
