@@ -1,3 +1,16 @@
+import subprocess
+
+# Install missing system dependencies
+subprocess.run(["apt-get", "update"])
+subprocess.run(["apt-get", "install", "-y", "libfontconfig1", "libglib2.0-0"])  # Needed for wordcloud
+
+# Install missing Python dependencies
+subprocess.run(["pip", "install", "spacy", "wordcloud", "textblob", "pandas", "plotly", "streamlit"])
+
+# Download spaCy model
+subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
