@@ -11,4 +11,3 @@ matplotlib
 requests
 regex
 cython==0.29.36
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz
