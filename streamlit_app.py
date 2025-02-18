@@ -106,6 +106,26 @@ influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
 # Recent Feed Details
+st.subheader(f"📸 {influencer_name}'s Recent Posts")
+
+df_thumbnails = df_filtered[['thumbnail_url']].dropna().head(3) 
+
+if df_thumbnails.empty:
+    st.warning("No images available for this influencer.")
+else:
+    # 3x3 layout
+    cols = st.columns(3)
+    for index, (_, row) in enumerate(df_thumbnails.iterrows()):
+        with cols[index % 3]:
+            st.image(
+                row["thumbnail_url"],
+                caption=f"Post {index+1}",
+                use_container_width=True,
+                output_format="auto"
+            )
+            # add thodasa space, doesnt seem to work
+            if (index + 1) % 3 == 0:
+                st.write("")
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
