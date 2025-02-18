@@ -110,7 +110,7 @@ def generate_summary(text_data):
     prompt = f"Summarize the following influencer's social media content in 2-3 sentences:\n{text_data[:5000]}"
 
     try:
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
