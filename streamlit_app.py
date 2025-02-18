@@ -13,6 +13,8 @@ import requests
 from io import BytesIO
 import google.generativeai as genai
 
+genai.configure(api_key=st.secrets["gemini"]["api_key"])
+
 # Install and load spaCy model
 try:
     nlp = spacy.load("en_core_web_sm")
