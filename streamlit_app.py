@@ -105,17 +105,23 @@ st.header("📊 Influencer Analysis")
 influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
-# Recent Feed Details
 st.subheader(f"🎥 {influencer_name}'s Recent Videos")
 
-# Filter and display top 5 videos
-df_videos = df_filtered[['thumbnail_url', 'video_url']].dropna().head(5) # display 3
+# Filter, drop NA/empty values, and reset index
+df_videos = df_filtered[['thumbnail_url', 'video_url']].dropna()
+df_videos = df_videos[(df_videos['thumbnail_url'] != '') & (df_videos['video_url'] != '')].head(5)
+df_videos = df_videos.reset_index(drop=True)  # Reset index for proper numbering
 
 if df_videos.empty:
     st.warning("No videos available for this influencer.")
 else:
     for index, row in df_videos.iterrows():
         st.image(row["thumbnail_url"], caption=f"Video {index+1}", use_container_width=True)
+        
+        # Debugging: Display the video URL
+        st.write("Video URL:", row["video_url"])
+        
+        # Display the video
         st.video(row["video_url"])
 
 if df_filtered.empty:
