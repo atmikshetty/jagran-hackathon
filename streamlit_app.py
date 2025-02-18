@@ -12,8 +12,9 @@ import gdown
 import requests
 from io import BytesIO
 import google.generativeai as genai
+import os
 
-genai.configure(api_key=st.secrets["gemini"]["api_key"])
+genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"))
 
 # Install and load spaCy model
 try:
