@@ -8,6 +8,7 @@ from textblob import TextBlob
 import spacy
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import gdown
 
 # Install and load spaCy model
 try:
@@ -21,17 +22,30 @@ analyzer = SentimentIntensityAnalyzer()
 
 @st.cache_data
 def load_data():
-    df_main = pd.read_csv("datasets/influencer_data_final.csv")
-    df_comments = pd.read_csv("datasets/10_influencers_comments_data.csv")
+    # # old
+    # df_main = pd.read_csv("datasets/influencer_data_final.csv")
+    # df_comments = pd.read_csv("datasets/10_influencers_comments_data.csv")
 
-    if "id" not in df_main.columns or "post_id" not in df_comments.columns:
-        st.error("🚨 Error: Missing necessary columns in datasets!")
-        return df_main  
+    # if "id" not in df_main.columns or "post_id" not in df_comments.columns:
+    #     st.error("🚨 Error: Missing necessary columns in datasets!")
+    #     return df_main  
 
-    df_comments.rename(columns={"text": "comment_text"}, inplace=True)
-    df_merged = df_main.merge(df_comments, left_on="id", right_on="post_id", how="left")
+    # df_comments.rename(columns={"text": "comment_text"}, inplace=True)
+    # df_merged = df_main.merge(df_comments, left_on="id", right_on="post_id", how="left")
 
-    return df_merged
+    # return df_merged
+
+    file_id = "1s2mwzkFjQai5Lc27r45ecjHVNOtTwCDl"
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output_path = "final_merged_data.csv" 
+
+    try:
+        gdown.download(url, output_path, quiet=False)
+        df = pd.read_csv(output_path)
+        return df
+    except Exception as e:
+        st.error(f"🚨 Error loading data: {e}")
+        return pd.DataFrame()
 
 df = load_data()
 
