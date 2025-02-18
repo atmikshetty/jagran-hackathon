@@ -115,7 +115,7 @@ if df_videos.empty:
     st.warning("No videos available for this influencer.")
 else:
     for index, row in df_videos.iterrows():
-        st.image(row["thumbnail_url"], caption=f"Video {index+1}", use_column_width=True)
+        st.image(row["thumbnail_url"], caption=f"Video {index+1}", use_container_width=True)
         st.video(row["video_url"])
 
 if df_filtered.empty:
