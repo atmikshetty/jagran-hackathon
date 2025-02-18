@@ -127,7 +127,7 @@ influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
 # User summary
-st.subheader("Bio")
+st.subheader(f"✨ {influencer_name}'s Bio")
 
 # top 10 posts
 df_captions = (
