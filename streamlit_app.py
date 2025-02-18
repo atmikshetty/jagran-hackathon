@@ -109,22 +109,27 @@ df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# Get the first 3 rows with a non-empty thumbnail_url
-df_thumbnails = df_filtered[['thumbnail_url']].dropna().head(3)
+# 3 images only
+df_thumbnails = (
+    df_filtered[['thumbnail_url']]
+    .dropna()                
+    .drop_duplicates()       
+    .head(3)                
+)
 
 if df_thumbnails.empty:
     st.warning("No images available for this influencer.")
 else:
-    # Create a 3-column layout
+    # 3 column layout
     cols = st.columns(3)
     for index, (_, row) in enumerate(df_thumbnails.iterrows()):
         thumbnail_url = row["thumbnail_url"]
         
-        # Attempt to fetch the image
+        # request to the url
         try:
             response = requests.get(thumbnail_url, timeout=10)
             if response.status_code == 200:
-                # Convert response content to an image buffer
+                # something from chatgpt
                 image_bytes = BytesIO(response.content)
                 with cols[index % 3]:
                     st.image(
@@ -133,7 +138,7 @@ else:
                         use_container_width=True
                     )
             else:
-                # If the request failed, show a warning
+                # exceptions
                 with cols[index % 3]:
                     st.warning(f"Failed to fetch image (status code: {response.status_code})")
         except Exception as e:
