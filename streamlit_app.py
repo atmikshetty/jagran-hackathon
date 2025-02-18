@@ -9,6 +9,8 @@ import spacy
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import gdown
+import requests
+from io import BytesIO
 
 # Install and load spaCy model
 try:
@@ -105,27 +107,38 @@ st.header("📊 Influencer Analysis")
 influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
-# Recent Feed Details
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-df_thumbnails = df_filtered[['thumbnail_url']].dropna().head(3) 
+# Get the first 3 rows with a non-empty thumbnail_url
+df_thumbnails = df_filtered[['thumbnail_url']].dropna().head(3)
 
 if df_thumbnails.empty:
     st.warning("No images available for this influencer.")
 else:
-    # 3x3 layout
+    # Create a 3-column layout
     cols = st.columns(3)
     for index, (_, row) in enumerate(df_thumbnails.iterrows()):
-        with cols[index % 3]:
-            st.image(
-                row["thumbnail_url"],
-                caption=f"Post {index+1}",
-                use_container_width=True,
-                output_format="auto"
-            )
-            # add thodasa space, doesnt seem to work
-            if (index + 1) % 3 == 0:
-                st.write("")
+        thumbnail_url = row["thumbnail_url"]
+        
+        # Attempt to fetch the image
+        try:
+            response = requests.get(thumbnail_url, timeout=10)
+            if response.status_code == 200:
+                # Convert response content to an image buffer
+                image_bytes = BytesIO(response.content)
+                with cols[index % 3]:
+                    st.image(
+                        image_bytes,
+                        caption=f"Post {index+1}",
+                        use_container_width=True
+                    )
+            else:
+                # If the request failed, show a warning
+                with cols[index % 3]:
+                    st.warning(f"Failed to fetch image (status code: {response.status_code})")
+        except Exception as e:
+            with cols[index % 3]:
+                st.error(f"Error fetching image: {e}")
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
