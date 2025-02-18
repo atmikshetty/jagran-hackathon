@@ -33,7 +33,7 @@ def load_data():
     df_merged = df_main.merge(df_comments, left_on="id", right_on="post_id", how="left")
 
     if "id" in df_facts.columns:
-        df_merged = df_merged.merge(df_facts, on="post_id", how="left")
+        df_merged = df_merged.merge(df_facts, on="id", how="left")
 
     return df_merged
 
