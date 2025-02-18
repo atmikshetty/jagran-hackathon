@@ -11,6 +11,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import gdown
 import requests
 from io import BytesIO
+import google.generativeai as genai
 
 # Install and load spaCy model
 try:
@@ -98,6 +99,21 @@ def detect_emotions(text):
     
     return emotion_dict
 
+def generate_summary(text_data):
+    """Summarizes influencer content using Gemini"""
+    if not isinstance(text_data, str) or not text_data.strip():
+        return "No summary available."
+
+    prompt = f"Summarize the following influencer's social media content in 2-3 sentences:\n{text_data[:5000]}"
+
+    try:
+        model = genai.GenerativeModel("gemini-pro")
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        print(f"Error generating summary: {e}")
+        return "Summary generation failed."
+
 df = compute_sentiment_and_promotion(df)
 
 # Streamlit UI
@@ -106,6 +122,24 @@ st.header("📊 Influencer Analysis")
 
 influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
+
+# User summary
+st.subheader("Bio")
+
+# top 10 posts
+df_captions = (
+    df_filtered[['text']]
+    .dropna()           
+    .drop_duplicates()  
+    .head(10)          
+)
+
+captions_list = df_captions['caption'].tolist()
+captions_text = "\n".join(captions_list)
+
+# generate summary
+summary = generate_summary(captions_text)
+st.write(summary)
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
