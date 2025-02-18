@@ -23,6 +23,7 @@ analyzer = SentimentIntensityAnalyzer()
 def load_data():
     df_main = pd.read_csv("datasets/influencer_data_final.csv")
     df_comments = pd.read_csv("datasets/10_influencers_comments_data.csv")
+    df_facts = pd.read_csv("datasets/fact_checking_results.csv")
 
     if "id" not in df_main.columns or "post_id" not in df_comments.columns:
         st.error("🚨 Error: Missing necessary columns in datasets!")
@@ -30,6 +31,9 @@ def load_data():
 
     df_comments.rename(columns={"text": "comment_text"}, inplace=True)
     df_merged = df_main.merge(df_comments, left_on="id", right_on="post_id", how="left")
+
+    if "id" in df_facts.columns:
+        df_merged = df_merged.merge(df_facts, on="post_id", how="left")
 
     return df_merged
 
