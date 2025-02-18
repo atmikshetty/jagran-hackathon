@@ -149,3 +149,15 @@ else:
         st.image(wordcloud.to_array(), use_container_width=True)
     else:
         st.write("No text available for word cloud.")
+    
+    # Fact Checking
+    # Bar Plot for "No claims found" responses
+    st.subheader("📊 Fact-Checked Claims Distribution")
+    claims_counts = df_filtered['fact_checked_claim_comments'].value_counts()
+    fig_claims = px.bar(
+        x=claims_counts.index, 
+        y=claims_counts.values, 
+        title="Fact-Checked Claims Distribution",
+        labels={'x': 'Claim Status', 'y': 'Count'}
+    )
+    st.plotly_chart(fig_claims, use_container_width=True)
