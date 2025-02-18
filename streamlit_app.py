@@ -134,7 +134,7 @@ df_captions = (
     .head(10)          
 )
 
-captions_list = df_captions['caption'].tolist()
+captions_list = df_captions['text'].tolist()
 captions_text = "\n".join(captions_list)
 
 # generate summary
