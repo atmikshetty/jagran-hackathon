@@ -146,11 +146,13 @@ st.write(summary)
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# Define a common browser User-Agent
+# Define headers that mimic a browser request (Option 1)
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/105.0.0.0 Safari/537.36"
+                  "Chrome/105.0.0.0 Safari/537.36",
+    "Referer": "https://www.instagram.com/",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
 }
 
 # Assume df_filtered is your DataFrame with unique thumbnail URLs
@@ -183,6 +185,7 @@ else:
         except Exception as e:
             with cols[index % 3]:
                 st.error(f"Error fetching image: {e}")
+
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
