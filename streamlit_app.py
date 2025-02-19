@@ -1,8 +1,10 @@
 import subprocess
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+import plotly.figure_factory as ff
 from wordcloud import WordCloud
 from textblob import TextBlob
 import spacy
@@ -81,8 +83,8 @@ def compute_sentiment_and_promotion(df):
                    re.search(r'https?://\S+', caption) or contains_brand_name(caption)
         return 0  
 
-    df["caption_sentiment"] = df["caption"].apply(analyze_sentiment)
-    df["is_sponsored"] = df["caption"].apply(detect_promotional_post)
+    df.loc[:, "caption_sentiment"] = df["caption"].apply(analyze_sentiment)
+    df.loc[:, "is_sponsored"] = df["caption"].apply(detect_promotional_post)
     return df
 
 def detect_emotions(text):
@@ -271,3 +273,26 @@ else:
     )
 
     st.plotly_chart(fig_claims, use_container_width=True)
+
+    # Correlation Heatmap
+    st.subheader("📊 Correlation Heatmap")
+
+    # Selecting only numeric columns for correlation
+    numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
+    df_corr = df_filtered[numeric_cols].corr()
+
+    # Convert correlation matrix to numpy array
+    corr_values = df_corr.to_numpy()
+
+    # Create Heatmap
+    fig_corr = ff.create_annotated_heatmap(
+        z=corr_values, 
+        x=df_corr.columns, 
+        y=df_corr.index, 
+        annotation_text=np.round(corr_values, 2),  # Show values in heatmap
+        colorscale="Viridis",  # Aesthetic color scheme
+        showscale=True
+    )
+
+    # Display Heatmap in Streamlit
+    st.plotly_chart(fig_corr, use_container_width=True)
