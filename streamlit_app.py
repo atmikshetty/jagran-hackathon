@@ -241,7 +241,12 @@ else:
     st.subheader("🌍 Theme Analysis")
     text = " ".join(df_filtered["caption"].dropna())
     if text.strip():
-        wordcloud = WordCloud(width=800, height=400, background_color="white").generate(text)
+        wordcloud = WordCloud(
+            width=PLOT_WIDTH,
+            height=PLOT_HEIGHT,
+            background_color=PLOT_BGCOLOR,
+            colormap='viridis'  # Using a consistent colormap
+        ).generate(text)
         st.image(wordcloud.to_array(), use_container_width=True)
     else:
         st.write("No text available for word cloud.")
