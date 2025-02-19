@@ -122,20 +122,6 @@ def generate_summary(text_data):
     except Exception as e:
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
-    
-def calculate_claim_percentage(df):
-    """Calculates the percentage of posts that contain claims."""
-    if "fact_checked_claim_comments" not in df.columns:
-        return "N/A"
-
-    total_posts = len(df)
-    claim_posts = df["fact_checked_claim_comments"].apply(lambda x: x != "No Claim Found").sum()
-
-    if total_posts == 0:
-        return "0%"  # To avoid division by zero
-
-    claim_percentage = (claim_posts / total_posts) * 100
-    return f"{claim_percentage:.2f}%"
 
 df = compute_sentiment_and_promotion(df)
 
@@ -177,11 +163,8 @@ else:
     # Fact Checking Details
     st.write(f"### 🕵️ Fact Check for {influencer_name}")
 
-    # Compute claim percentage
-    claim_percentage = calculate_claim_percentage(df_filtered)
-
     # Display claim percentage as a metric
-    st.metric("Claims Found in Posts", claim_percentage)
+    st.metric("Percentage of Claims Found in Posts: 0%")
 
     # Only display claim details if the column exists
     if "fact_checked_claim_comments" in df_filtered.columns:
