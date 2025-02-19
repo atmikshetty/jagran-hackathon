@@ -146,27 +146,30 @@ st.write(summary)
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# 3 images only
+# Define a common browser User-Agent
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/105.0.0.0 Safari/537.36"
+}
+
+# Assume df_filtered is your DataFrame with unique thumbnail URLs
 df_thumbnails = (
     df_filtered[['thumbnail_url']]
-    .dropna()                
-    .drop_duplicates()       
-    .head(3)                
+    .dropna()
+    .drop_duplicates()
+    .head(3)
 )
 
 if df_thumbnails.empty:
     st.warning("No images available for this influencer.")
 else:
-    # 3 column layout
     cols = st.columns(3)
     for index, (_, row) in enumerate(df_thumbnails.iterrows()):
         thumbnail_url = row["thumbnail_url"]
-        
-        # request to the url
         try:
-            response = requests.get(thumbnail_url, timeout=10)
+            response = requests.get(thumbnail_url, headers=headers, timeout=10)
             if response.status_code == 200:
-                # something from chatgpt
                 image_bytes = BytesIO(response.content)
                 with cols[index % 3]:
                     st.image(
@@ -175,7 +178,6 @@ else:
                         use_container_width=True
                     )
             else:
-                # exceptions
                 with cols[index % 3]:
                     st.warning(f"Failed to fetch image (status code: {response.status_code})")
         except Exception as e:
@@ -242,7 +244,6 @@ else:
         st.write("No text available for word cloud.")
     
     # Fact Checking
-    # Bar Plot for "No claims found" responses
     st.subheader("📊 Fact-Checked Claims Distribution")
 
     # Fill missing values if needed
