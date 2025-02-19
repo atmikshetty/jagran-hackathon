@@ -15,6 +15,7 @@ import requests
 from io import BytesIO
 import google.generativeai as genai
 import os
+import urllib.parse
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"))
 
@@ -148,7 +149,7 @@ st.write(summary)
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# Client side loading
+# Assume df_filtered is your DataFrame with unique thumbnail URLs
 df_thumbnails = (
     df_filtered[['thumbnail_url']]
     .dropna()
@@ -162,15 +163,14 @@ else:
     cols = st.columns(3)
     for index, (_, row) in enumerate(df_thumbnails.iterrows()):
         thumbnail_url = row["thumbnail_url"]
-        # Create HTML for the image
-        html_code = f'''
-        <div style="text-align: center;">
-            <img src="{thumbnail_url}" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" alt="Post {index+1}">
-            <p>Post {index+1}</p>
-        </div>
-        '''
+        # URL-encode the thumbnail URL for safe passing as a query parameter
+        encoded_url = urllib.parse.quote(thumbnail_url, safe="")
+        # Use your EC2 public IP and FastAPI port in the proxy_base_url
+        proxy_base_url = "http://13.60.9.163:8000/proxy-image"
+        proxy_url = f"{proxy_base_url}?url={encoded_url}"
+        
         with cols[index % 3]:
-            st.markdown(html_code, unsafe_allow_html=True)
+            st.image(proxy_url, caption=f"Post {index+1}", use_container_width=True)
 
 
 if df_filtered.empty:
