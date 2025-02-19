@@ -186,6 +186,14 @@ else:
     st.metric("Total Posts", total_posts)
     st.metric("Most Liked Post", f"{most_liked_post['like_count']} likes")
 
+    # Fact Checking Details
+    st.write(f"### 🕵️ Fact Check for {influencer_name}")
+    df_filtered["fact_check_result"] = df_filtered["text"].apply(fact_check_text)
+
+    for index, row in df_filtered.iterrows():
+        st.write(f"📌 **Post {index+1}:** {row['fact_check_result']['assessment']}")
+        st.metric("Factual Accuracy", f"{row['fact_check_result']['accuracy']}%")
+
     # Emotion Analysis - Spider Plot
     st.subheader("📊 Emotion Analysis (Spider Plot)")
     emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
