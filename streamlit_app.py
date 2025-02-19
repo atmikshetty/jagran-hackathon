@@ -22,6 +22,30 @@ api_key = st.secrets["GEMINI_API_KEY"]
 # Configure the genai client
 genai.configure(api_key=api_key)
 
+# Define a consistent color scheme
+COLOR_SCHEME = {
+    'primary': '#1f77b4',  # Blue
+    'secondary': '#ff7f0e',  # Orange
+    'accent': '#2ca02c',  # Green
+    'neutral': '#7f7f7f'  # Gray
+}
+
+# Define consistent layout parameters
+PLOT_HEIGHT = 500
+PLOT_WIDTH = 800
+PLOT_BGCOLOR = 'white'
+PLOT_GRIDCOLOR = '#f0f0f0'
+
+# Define common layout settings
+COMMON_LAYOUT = {
+    'height': PLOT_HEIGHT,
+    'width': PLOT_WIDTH,
+    'paper_bgcolor': PLOT_BGCOLOR,
+    'plot_bgcolor': PLOT_BGCOLOR,
+    'font': {'size': 12, 'color': '#2e2e2e'},
+    'margin': dict(l=50, r=50, t=50, b=50)
+}
+
 # Install and load spaCy model
 try:
     nlp = spacy.load("en_core_web_sm")
