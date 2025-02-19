@@ -123,31 +123,19 @@ def generate_summary(text_data):
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
     
-def fact_check_text(text):
-    """Fact-checks influencer content using Gemini and provides an accuracy score."""
-    if not isinstance(text, str) or not text.strip():
-        return {"assessment": "No fact-checking available.", "accuracy": "N/A"}
+def calculate_claim_percentage(df):
+    """Calculates the percentage of posts that contain claims."""
+    if "fact_checked_claim_comments" not in df.columns:
+        return "N/A"
 
-    prompt = (
-        f"Fact-check the following influencer's social media post.\n"
-        f"Provide a factual assessment (True, Misleading, or False) along with an accuracy percentage (0-100%).\n"
-        f"Also, give a short explanation for your assessment:\n\n{text[:5000]}"
-    )
+    total_posts = len(df)
+    claim_posts = df["fact_checked_claim_comments"].apply(lambda x: x != "No Claim Found").sum()
 
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
-        response_text = response.text.strip()
+    if total_posts == 0:
+        return "0%"  # To avoid division by zero
 
-        # Extract accuracy percentage if present
-        import re
-        match = re.search(r'(\d{1,3})\s*%', response_text)
-        accuracy = match.group(1) if match else "Unknown"
-
-        return {"assessment": response_text, "accuracy": accuracy}
-    except Exception as e:
-        print(f"Error in fact-checking: {e}")
-        return {"assessment": "Fact-checking failed.", "accuracy": "N/A"}
+    claim_percentage = (claim_posts / total_posts) * 100
+    return f"{claim_percentage:.2f}%"
 
 df = compute_sentiment_and_promotion(df)
 
@@ -188,7 +176,9 @@ else:
 
     # Fact Checking Details
     st.write(f"### 🕵️ Fact Check for {influencer_name}")
-    df_filtered["fact_check_result"] = df_filtered["text"].apply(fact_check_text)
+
+    claim_percentage = calculate_claim_percentage(df_filtered)
+    st.metric("Claims Found in Posts", claim_percentage)
 
     for index, row in df_filtered.iterrows():
         st.write(f"📌 **Post {index+1}:** {row['fact_check_result']['assessment']}")
