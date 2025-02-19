@@ -165,11 +165,6 @@ else:
 
     st.write(f"Percentage of Claims Found in Posts: 0%")
 
-    # Only display claim details if the column exists
-    if "fact_checked_claim_comments" in df_filtered.columns:
-        for index, row in df_filtered.iterrows():
-            st.write(f"📌 **Post {index+1}:** {row['fact_checked_claim_comments']}")
-
     # Emotion Analysis - Spider Plot
     st.subheader("📊 Emotion Analysis (Spider Plot)")
     emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
