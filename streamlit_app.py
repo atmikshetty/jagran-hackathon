@@ -244,13 +244,29 @@ else:
     # Fact Checking
     # Bar Plot for "No claims found" responses
     st.subheader("📊 Fact-Checked Claims Distribution")
+
+    # Fill missing values if needed
+    df_filtered['fact_checked_claim_comments'].fillna("No claims found", inplace=True)
+
+    # Count occurrences of each claim category
     claims_counts = df_filtered['fact_checked_claim_comments'].value_counts()
+
+    # Ensure all categories appear in the chart
     fig_claims = px.bar(
         x=claims_counts.index, 
         y=claims_counts.values, 
         title="Fact-Checked Claims Distribution",
-        labels={'x': 'Claim Status', 'y': 'Count'}
+        labels={'x': 'Claim Status', 'y': 'Count'},
+        text_auto=True  # Display values on top of bars
     )
+
+    # Update layout for better visibility
+    fig_claims.update_layout(
+        xaxis=dict(categoryorder='total descending', tickangle=-45),  # Sort bars & rotate labels
+        yaxis=dict(title="Count", tickmode="linear"),  # Ensure all values are visible
+        bargap=0.2,  # Adjust bar spacing
+    )
+
     st.plotly_chart(fig_claims, use_container_width=True)
 
 
