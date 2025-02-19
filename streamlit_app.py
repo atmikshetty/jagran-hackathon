@@ -209,7 +209,6 @@ if influencer_name:
     # Display images in a horizontal layout
     images = load_influencer_images(influencer_name)
     if images:
-        st.write("### Recent Posts")
         cols = st.columns(3)
         for idx, (col, image) in enumerate(zip(cols, images)):
             with col:
