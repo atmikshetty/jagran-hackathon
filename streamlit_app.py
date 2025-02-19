@@ -263,16 +263,22 @@ else:
 
     # Selecting only numeric columns for correlation
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
+
+    # Ensure columns exist in df_filtered before computing correlation
     df_corr = df_filtered[numeric_cols].corr()
 
     # Convert correlation matrix to numpy array
     corr_values = df_corr.to_numpy()
 
+    # Convert Index objects to lists
+    x_labels = list(df_corr.columns)
+    y_labels = list(df_corr.index)
+
     # Create Heatmap
     fig_corr = ff.create_annotated_heatmap(
         z=corr_values, 
-        x=df_corr.columns, 
-        y=df_corr.index, 
+        x=x_labels, 
+        y=y_labels, 
         annotation_text=np.round(corr_values, 2),  # Show values in heatmap
         colorscale="Viridis",  # Aesthetic color scheme
         showscale=True
