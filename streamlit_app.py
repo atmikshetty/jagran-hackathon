@@ -122,6 +122,32 @@ def generate_summary(text_data):
     except Exception as e:
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
+    
+def fact_check_text(text):
+    """Fact-checks influencer content using Gemini and provides an accuracy score."""
+    if not isinstance(text, str) or not text.strip():
+        return {"assessment": "No fact-checking available.", "accuracy": "N/A"}
+
+    prompt = (
+        f"Fact-check the following influencer's social media post.\n"
+        f"Provide a factual assessment (True, Misleading, or False) along with an accuracy percentage (0-100%).\n"
+        f"Also, give a short explanation for your assessment:\n\n{text[:5000]}"
+    )
+
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt)
+        response_text = response.text.strip()
+
+        # Extract accuracy percentage if present
+        import re
+        match = re.search(r'(\d{1,3})\s*%', response_text)
+        accuracy = match.group(1) if match else "Unknown"
+
+        return {"assessment": response_text, "accuracy": accuracy}
+    except Exception as e:
+        print(f"Error in fact-checking: {e}")
+        return {"assessment": "Fact-checking failed.", "accuracy": "N/A"}
 
 df = compute_sentiment_and_promotion(df)
 
@@ -149,7 +175,6 @@ captions_text = "\n".join(captions_list)
 # generate summary
 summary = generate_summary(captions_text)
 st.write(summary)
-
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
@@ -209,32 +234,6 @@ else:
         st.image(wordcloud.to_array(), use_container_width=True)
     else:
         st.write("No text available for word cloud.")
-    
-    # Fact Checking as a Pie Chart
-    st.subheader("📊 Fact-Checked Claims Distribution")
-
-    # Fill missing values if needed
-    df_filtered['fact_checked_claim_comments'].fillna("No claims found", inplace=True)
-
-    # Count occurrences of each claim category
-    claims_counts = df_filtered['fact_checked_claim_comments'].value_counts()
-
-    # Create a pie chart using Plotly Express
-    fig_claims = px.pie(
-        names=claims_counts.index, 
-        values=claims_counts.values, 
-        title="Fact-Checked Claims Distribution",
-        color_discrete_sequence=px.colors.qualitative.Pastel  # Use a pastel color palette for beauty
-    )
-
-    # Update trace for better label formatting
-    fig_claims.update_traces(
-        textposition='inside',
-        textinfo='percent+label',
-        marker=dict(line=dict(color='#000000', width=1))  # Optional: add a thin border for clarity
-    )
-
-    st.plotly_chart(fig_claims, use_container_width=True)
 
     # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
