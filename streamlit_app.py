@@ -17,9 +17,10 @@ import google.generativeai as genai
 import os
 from PIL import Image, UnidentifiedImageError
 
+api_key = st.secrets["GEMINI_API_KEY"]
 
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"))
+# Configure the genai client
+genai.configure(api_key=api_key)
 
 # Install and load spaCy model
 try:
