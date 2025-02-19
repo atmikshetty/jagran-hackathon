@@ -252,3 +252,75 @@ else:
         labels={'x': 'Claim Status', 'y': 'Count'}
     )
     st.plotly_chart(fig_claims, use_container_width=True)
+
+
+# Trending Posts Bar Plot
+st.subheader("🔥 Most Trending Posts (Top Likes)")
+most_liked_posts = df.loc[df.groupby("influencer_name")["like_count"].idxmax()]
+fig_trending = px.bar(most_liked_posts, x="influencer_name", y="like_count", color="influencer_name", title="Most Trending Posts by Influencer", color_discrete_sequence=["skyblue"])
+st.plotly_chart(fig_trending, use_container_width=True)
+
+@st.cache_data
+def compute_sentiment_and_promotion(df):
+    def analyze_sentiment(text):
+        polarity = TextBlob(str(text)).sentiment.polarity  
+        return "Positive" if polarity > 0 else "Negative" if polarity < 0 else "Neutral"
+
+    def contains_brand_name(text):
+        doc = nlp(str(text))  
+        return any(ent.label_ in ["ORG", "PRODUCT", "GPE"] for ent in doc.ents)
+
+    def detect_promotional_post(caption):
+        if isinstance(caption, str):  
+            words = caption.lower().split()
+            sponsored_tags = {
+                "#ad", "#sponsored", "#promotion", "#brandpartner", "#collab", 
+                "#gifted", "#prpackage", "#promocode", "#partnership"
+            }
+            promotional_phrases = {
+                "Use code", "Limited offer", "Partnered with", "Check out", 
+                "Special discount", "Exclusive deal", "Click the link", 
+                "Promo ends soon", "Collab with"
+            }
+
+            return any(tag in words for tag in sponsored_tags) or \
+                   any(phrase.lower() in caption.lower() for phrase in promotional_phrases) or \
+                   re.search(r'https?://\S+', caption) or contains_brand_name(caption)
+        return False  # Changed from 0 to False for better boolean consistency
+
+    df["caption_sentiment"] = df["caption"].apply(analyze_sentiment)
+    df["is_sponsored"] = df["caption"].apply(detect_promotional_post)
+    return df
+
+# Add this new function for sponsorship visualization
+def display_sponsorship_analysis(df_filtered):
+    """
+    Display sponsorship analysis visualization
+    """
+    st.subheader("📢 Sponsored Posts Analysis")
+    
+    # Calculate sponsorship statistics
+    promo_counts = df_filtered["is_sponsored"].value_counts().rename(
+        index={False: "Non-Sponsored", True: "Sponsored"}
+    )
+    
+    # Create pie chart
+    fig_promo = px.pie(
+        promo_counts,
+        names=promo_counts.index,
+        values=promo_counts.values,
+        title="Sponsored vs Non-Sponsored Posts",
+        color_discrete_sequence=['#FF9B9B', '#9CC4E4']
+    )
+    
+    # Add percentage labels
+    fig_promo.update_traces(
+        textposition='inside',
+        textinfo='percent+label'
+    )
+    
+    # Display the chart
+    st.plotly_chart(fig_promo, use_container_width=True)
+
+if not df_filtered.empty:
+    display_sponsorship_analysis(df_filtered)
