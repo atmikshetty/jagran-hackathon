@@ -264,8 +264,11 @@ else:
     # Selecting only numeric columns for correlation
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
 
-    # Ensure columns exist in df_filtered before computing correlation
+    # Ensure only valid numeric columns are considered
     df_corr = df_filtered[numeric_cols].corr()
+
+    # Drop NaN values in correlation matrix
+    df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
 
     # Convert correlation matrix to numpy array
     corr_values = df_corr.to_numpy()
