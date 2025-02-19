@@ -50,7 +50,7 @@ def load_data():
         df = pd.read_csv(output_path)
         return df
     except Exception as e:
-        st.error(f"🚨 Error loading data: {e}")
+        st.error(f"Error loading data: {e}")
         return pd.DataFrame()
 
 df = load_data()
