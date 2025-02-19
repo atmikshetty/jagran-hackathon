@@ -278,6 +278,7 @@ else:
         st.write("No text available for word cloud.")
 
     # Correlation Heatmap
+    # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
     df_corr = df_filtered[numeric_cols].corr()
@@ -309,7 +310,9 @@ else:
         ),
         coloraxis_colorbar=dict(
             tickfont=dict(color=COLOR_SCHEME['text']),
-            title=dict(color=COLOR_SCHEME['text'])
+            title=dict(
+                font=dict(color=COLOR_SCHEME['text'])  # Correct way to set colorbar title font color
+            )
         )
     )
     st.plotly_chart(fig_corr, use_container_width=True)
