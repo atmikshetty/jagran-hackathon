@@ -269,7 +269,9 @@ else:
             width=PLOT_WIDTH,
             height=PLOT_HEIGHT,
             background_color=PLOT_BGCOLOR,
-            colormap='viridis'  # Using a consistent colormap
+            colormap='viridis',  # Using a consistent colormap
+            min_font_size=10,
+            max_font_size=50
         ).generate(text)
         st.image(wordcloud.to_array(), use_container_width=True)
     else:
