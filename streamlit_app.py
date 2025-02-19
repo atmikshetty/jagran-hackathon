@@ -177,12 +177,16 @@ else:
     # Fact Checking Details
     st.write(f"### 🕵️ Fact Check for {influencer_name}")
 
+    # Compute claim percentage
     claim_percentage = calculate_claim_percentage(df_filtered)
+
+    # Display claim percentage as a metric
     st.metric("Claims Found in Posts", claim_percentage)
 
-    for index, row in df_filtered.iterrows():
-        st.write(f"📌 **Post {index+1}:** {row['fact_check_result']['assessment']}")
-        st.metric("Factual Accuracy", f"{row['fact_check_result']['accuracy']}%")
+    # Only display claim details if the column exists
+    if "fact_checked_claim_comments" in df_filtered.columns:
+        for index, row in df_filtered.iterrows():
+            st.write(f"📌 **Post {index+1}:** {row['fact_checked_claim_comments']}")
 
     # Emotion Analysis - Spider Plot
     st.subheader("📊 Emotion Analysis (Spider Plot)")
