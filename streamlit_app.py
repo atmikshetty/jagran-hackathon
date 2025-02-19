@@ -148,16 +148,7 @@ st.write(summary)
 
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# Define headers that mimic a browser request (Option 1)
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/105.0.0.0 Safari/537.36",
-    "Referer": "https://www.instagram.com/",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
-}
-
-# Assume df_filtered is your DataFrame with unique thumbnail URLs
+# Client side loading
 df_thumbnails = (
     df_filtered[['thumbnail_url']]
     .dropna()
@@ -171,22 +162,15 @@ else:
     cols = st.columns(3)
     for index, (_, row) in enumerate(df_thumbnails.iterrows()):
         thumbnail_url = row["thumbnail_url"]
-        try:
-            response = requests.get(thumbnail_url, headers=headers, timeout=10)
-            if response.status_code == 200:
-                image_bytes = BytesIO(response.content)
-                with cols[index % 3]:
-                    st.image(
-                        image_bytes,
-                        caption=f"Post {index+1}",
-                        use_container_width=True
-                    )
-            else:
-                with cols[index % 3]:
-                    st.warning(f"Failed to fetch image (status code: {response.status_code})")
-        except Exception as e:
-            with cols[index % 3]:
-                st.error(f"Error fetching image: {e}")
+        # Create HTML for the image
+        html_code = f'''
+        <div style="text-align: center;">
+            <img src="{thumbnail_url}" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" alt="Post {index+1}">
+            <p>Post {index+1}</p>
+        </div>
+        '''
+        with cols[index % 3]:
+            st.markdown(html_code, unsafe_allow_html=True)
 
 
 if df_filtered.empty:
