@@ -16,6 +16,7 @@ from io import BytesIO
 import google.generativeai as genai
 import os
 from PIL import Image, UnidentifiedImageError
+from pathlib import Path
 
 api_key = st.secrets["GEMINI_API_KEY"]
 
@@ -150,6 +151,24 @@ def generate_summary(text_data):
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
 
+def load_influencer_images(influencer_name):
+    """Load images for the selected influencer from their directory"""
+    image_dir = Path(f"downloaded_images/{influencer_name}")
+    images = []
+    
+    if image_dir.exists():
+        # Get all jpg files in the influencer's directory
+        image_files = sorted(list(image_dir.glob("*.jpg")))[:3]  # Get first 3 images
+        
+        for image_file in image_files:
+            try:
+                image = Image.open(image_file)
+                images.append(image)
+            except Exception as e:
+                st.error(f"Error loading image {image_file}: {e}")
+    
+    return images
+
 df = compute_sentiment_and_promotion(df)
 
 # Streamlit UI
@@ -176,6 +195,20 @@ captions_text = "\n".join(captions_list)
 # generate summary
 summary = generate_summary(captions_text)
 st.write(summary)
+
+# Recent Images, Only 3
+st.subheader(f"✨ {influencer_name}'s Recent Posts")
+
+if influencer_name:
+    # Display images in a horizontal layout
+    images = load_influencer_images(influencer_name)
+    if images:
+        cols = st.columns(3)
+        for idx, (col, image) in enumerate(zip(cols, images)):
+            with col:
+                st.image(image, caption=f"Post {idx + 1}", use_column_width=True)
+    else:
+        st.warning(f"No images found for {influencer_name}")
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
