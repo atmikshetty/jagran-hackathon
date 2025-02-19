@@ -229,10 +229,12 @@ else:
     st.subheader("📊 Sentiment Distribution")
     sentiment_counts = df_filtered["caption_sentiment"].value_counts()
     fig_sentiment_pie = px.pie(
-        names=sentiment_counts.index, 
-        values=sentiment_counts.values, 
-        title="Sentiment Distribution"
+        names=sentiment_counts.index,
+        values=sentiment_counts.values,
+        title="Sentiment Distribution",
+        color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"], COLOR_SCHEME["accent"]]
     )
+    fig_sentiment_pie.update_layout(**COMMON_LAYOUT)
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
     # Word Cloud
