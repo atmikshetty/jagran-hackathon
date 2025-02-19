@@ -122,39 +122,6 @@ def generate_summary(text_data):
     except Exception as e:
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
-    
-def download_and_save_images(influencer_name, urls):
-    img_dir = f"images/{influencer_name}"
-    os.makedirs(img_dir, exist_ok=True)  # Ensure directory exists
-
-    saved_images = []
-    for i, url in enumerate(urls):
-        img_path = os.path.join(img_dir, f"post_{i+1}.jpg")
-
-        # Skip if image already exists
-        if os.path.exists(img_path):
-            saved_images.append(img_path)
-            continue  
-
-        try:
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-                "Referer": "https://www.instagram.com/"
-            }
-            response = requests.get(url, headers=headers, timeout=10)
-
-            if response.status_code == 200:
-                # Save image properly
-                with open(img_path, "wb") as f:
-                    f.write(response.content)
-                saved_images.append(img_path)
-            else:
-                st.error(f"❌ Failed to fetch {url} (Status: {response.status_code})")
-
-        except Exception as e:
-            st.error(f"⚠️ Error downloading {url}: {str(e)}")
-
-    return saved_images
 
 df = compute_sentiment_and_promotion(df)
 
@@ -183,26 +150,6 @@ captions_text = "\n".join(captions_list)
 summary = generate_summary(captions_text)
 st.write(summary)
 
-# Influencer's Recent Posts
-st.subheader(f"📸 {influencer_name}'s Recent Posts")
-
-# Select first 3 unique thumbnails
-df_thumbnails = df_filtered[['thumbnail_url']].dropna().drop_duplicates().head(3)
-
-if df_thumbnails.empty:
-    st.warning("⚠️ No images available for this influencer.")
-else:
-    urls = df_thumbnails["thumbnail_url"].tolist()
-    image_paths = download_and_save_images(influencer_name, urls)
-
-    if not image_paths:
-        st.warning("⚠️ No images could be downloaded.")
-    else:
-        # Display images in 3 columns
-        cols = st.columns(3)
-        for i, img_path in enumerate(image_paths):
-            with cols[i % 3]:
-                st.image(img_path, caption=f"Post {i+1}", use_container_width=True)
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
