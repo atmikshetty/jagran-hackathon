@@ -163,8 +163,9 @@ else:
     # Fact Checking Details
     st.write(f"### 🕵️ Fact Check for {influencer_name}")
 
+    percentage = 0
     # Display claim percentage as a metric
-    st.metric("Percentage of Claims Found in Posts: 0%")
+    st.metric(f"Percentage of Claims Found in Posts: {percentage}%")
 
     # Only display claim details if the column exists
     if "fact_checked_claim_comments" in df_filtered.columns:
