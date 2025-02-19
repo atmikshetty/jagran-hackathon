@@ -152,17 +152,23 @@ def generate_summary(text_data):
         return "Summary generation failed."
 
 def load_influencer_images(influencer_name):
-    """Load images for the selected influencer from their directory"""
-    image_dir = Path(f"downloaded_images/{influencer_name}")
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    image_dir = os.path.join(current_dir, "downloaded_images", influencer_name)
     images = []
     
-    if image_dir.exists():
+    if os.path.exists(image_dir):
         # Get all jpg files in the influencer's directory
-        image_files = sorted(list(image_dir.glob("*.jpg")))[:3]  # Get first 3 images
+        image_files = sorted([
+            f for f in os.listdir(image_dir) 
+            if f.endswith('.jpg')
+        ])[:3]  # Get first 3 images
         
         for image_file in image_files:
             try:
-                image = Image.open(image_file)
+                image_path = os.path.join(image_dir, image_file)
+                image = Image.open(image_path)
                 images.append(image)
             except Exception as e:
                 st.error(f"Error loading image {image_file}: {e}")
@@ -203,10 +209,11 @@ if influencer_name:
     # Display images in a horizontal layout
     images = load_influencer_images(influencer_name)
     if images:
+        st.write("### Recent Posts")
         cols = st.columns(3)
         for idx, (col, image) in enumerate(zip(cols, images)):
             with col:
-                st.image(image, caption=f"Post {idx + 1}", use_column_width=True)
+                st.image(image, caption=f"Post {idx + 1}", use_container_width=True)
     else:
         st.warning(f"No images found for {influencer_name}")
 
