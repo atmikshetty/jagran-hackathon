@@ -253,34 +253,22 @@ else:
 
     # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
-
-    # Selecting only numeric columns for correlation
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
-
-    # Ensure only valid numeric columns are considered
     df_corr = df_filtered[numeric_cols].corr()
-
-    # Drop NaN values in correlation matrix
     df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
-
-    # Convert correlation matrix to numpy array
     corr_values = df_corr.to_numpy()
-
-    # Convert Index objects to lists
     x_labels = list(df_corr.columns)
     y_labels = list(df_corr.index)
 
-    # Create Heatmap
     fig_corr = ff.create_annotated_heatmap(
-        z=corr_values, 
-        x=x_labels, 
-        y=y_labels, 
-        annotation_text=np.round(corr_values, 2),  # Show values in heatmap
-        colorscale="Viridis",  # Aesthetic color scheme
+        z=corr_values,
+        x=x_labels,
+        y=y_labels,
+        annotation_text=np.round(corr_values, 2),
+        colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
         showscale=True
     )
-
-    # Display Heatmap in Streamlit
+    fig_corr.update_layout(**COMMON_LAYOUT)
     st.plotly_chart(fig_corr, use_container_width=True)
 
     # Sponsored Posts Analysis
