@@ -15,7 +15,9 @@ import requests
 from io import BytesIO
 import google.generativeai as genai
 import os
-import urllib.parse
+from PIL import Image, UnidentifiedImageError
+
+
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"))
 
@@ -166,7 +168,13 @@ else:
         thumbnail_url = row["thumbnail_url"]
         
         try:
-            response = requests.get(thumbnail_url, timeout=10)
+            # Set headers to mimic a browser request
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+                "Referer": "https://www.instagram.com/"
+            }
+            
+            response = requests.get(thumbnail_url, headers=headers, timeout=10)
             if response.status_code == 200:
                 # Convert response content to an image buffer
                 image_bytes = BytesIO(response.content)
@@ -179,9 +187,15 @@ else:
             else:
                 with cols[index % 3]:
                     st.warning(f"Failed to fetch image (status code: {response.status_code})")
+        except requests.exceptions.RequestException as e:
+            with cols[index % 3]:
+                st.error(f"Error fetching image: {str(e)}")
+        except UnidentifiedImageError:
+            with cols[index % 3]:
+                st.error("Failed to process image format")
         except Exception as e:
             with cols[index % 3]:
-                st.error(f"Error fetching image: {e}")
+                st.error(f"Unexpected error: {str(e)}")
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
