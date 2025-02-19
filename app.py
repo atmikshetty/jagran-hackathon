@@ -1,10 +1,8 @@
 import subprocess
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-import plotly.figure_factory as ff
 from wordcloud import WordCloud
 from textblob import TextBlob
 import spacy
@@ -15,12 +13,8 @@ import requests
 from io import BytesIO
 import google.generativeai as genai
 import os
-from PIL import Image, UnidentifiedImageError
 
-api_key = st.secrets["GEMINI_API_KEY"]
-
-# Configure the genai client
-genai.configure(api_key=api_key)
+genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"))
 
 # Install and load spaCy model
 try:
@@ -87,8 +81,8 @@ def compute_sentiment_and_promotion(df):
                    re.search(r'https?://\S+', caption) or contains_brand_name(caption)
         return 0  
 
-    df.loc[:, "caption_sentiment"] = df["caption"].apply(analyze_sentiment)
-    df.loc[:, "is_sponsored"] = df["caption"].apply(detect_promotional_post)
+    df["caption_sentiment"] = df["caption"].apply(analyze_sentiment)
+    df["is_sponsored"] = df["caption"].apply(detect_promotional_post)
     return df
 
 def detect_emotions(text):
@@ -150,6 +144,43 @@ captions_text = "\n".join(captions_list)
 summary = generate_summary(captions_text)
 st.write(summary)
 
+st.subheader(f"📸 {influencer_name}'s Recent Posts")
+
+# 3 images only
+df_thumbnails = (
+    df_filtered[['thumbnail_url']]
+    .dropna()                
+    .drop_duplicates()       
+    .head(3)                
+)
+
+if df_thumbnails.empty:
+    st.warning("No images available for this influencer.")
+else:
+    # 3 column layout
+    cols = st.columns(3)
+    for index, (_, row) in enumerate(df_thumbnails.iterrows()):
+        thumbnail_url = row["thumbnail_url"]
+        
+        # request to the url
+        try:
+            response = requests.get(thumbnail_url, timeout=10)
+            if response.status_code == 200:
+                # something from chatgpt
+                image_bytes = BytesIO(response.content)
+                with cols[index % 3]:
+                    st.image(
+                        image_bytes,
+                        caption=f"Post {index+1}",
+                        use_container_width=True
+                    )
+            else:
+                # exceptions
+                with cols[index % 3]:
+                    st.warning(f"Failed to fetch image (status code: {response.status_code})")
+        except Exception as e:
+            with cols[index % 3]:
+                st.error(f"Error fetching image: {e}")
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
@@ -210,73 +241,70 @@ else:
     else:
         st.write("No text available for word cloud.")
     
-    # Fact Checking as a Pie Chart
+    # Fact Checking
+    # Bar Plot for "No claims found" responses
     st.subheader("📊 Fact-Checked Claims Distribution")
-
-    # Fill missing values if needed
-    df_filtered['fact_checked_claim_comments'].fillna("No claims found", inplace=True)
-
-    # Count occurrences of each claim category
     claims_counts = df_filtered['fact_checked_claim_comments'].value_counts()
-
-    # Create a pie chart using Plotly Express
-    fig_claims = px.pie(
-        names=claims_counts.index, 
-        values=claims_counts.values, 
+    fig_claims = px.bar(
+        x=claims_counts.index, 
+        y=claims_counts.values, 
         title="Fact-Checked Claims Distribution",
-        color_discrete_sequence=px.colors.qualitative.Pastel  # Use a pastel color palette for beauty
+        labels={'x': 'Claim Status', 'y': 'Count'}
     )
-
-    # Update trace for better label formatting
-    fig_claims.update_traces(
-        textposition='inside',
-        textinfo='percent+label',
-        marker=dict(line=dict(color='#000000', width=1))  # Optional: add a thin border for clarity
-    )
-
     st.plotly_chart(fig_claims, use_container_width=True)
 
-    # Correlation Heatmap
-    st.subheader("📊 Correlation Heatmap")
 
-    # Selecting only numeric columns for correlation
-    numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
+# Trending Posts Bar Plot
+st.subheader("🔥 Most Trending Posts (Top Likes)")
+most_liked_posts = df.loc[df.groupby("influencer_name")["like_count"].idxmax()]
+fig_trending = px.bar(most_liked_posts, x="influencer_name", y="like_count", color="influencer_name", title="Most Trending Posts by Influencer", color_discrete_sequence=["skyblue"])
+st.plotly_chart(fig_trending, use_container_width=True)
 
-    # Ensure only valid numeric columns are considered
-    df_corr = df_filtered[numeric_cols].corr()
+@st.cache_data
+def compute_sentiment_and_promotion(df):
+    def analyze_sentiment(text):
+        polarity = TextBlob(str(text)).sentiment.polarity  
+        return "Positive" if polarity > 0 else "Negative" if polarity < 0 else "Neutral"
 
-    # Drop NaN values in correlation matrix
-    df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
+    def contains_brand_name(text):
+        doc = nlp(str(text))  
+        return any(ent.label_ in ["ORG", "PRODUCT", "GPE"] for ent in doc.ents)
 
-    # Convert correlation matrix to numpy array
-    corr_values = df_corr.to_numpy()
+    def detect_promotional_post(caption):
+        if isinstance(caption, str):  
+            words = caption.lower().split()
+            sponsored_tags = {
+                "#ad", "#sponsored", "#promotion", "#brandpartner", "#collab", 
+                "#gifted", "#prpackage", "#promocode", "#partnership"
+            }
+            promotional_phrases = {
+                "Use code", "Limited offer", "Partnered with", "Check out", 
+                "Special discount", "Exclusive deal", "Click the link", 
+                "Promo ends soon", "Collab with"
+            }
 
-    # Convert Index objects to lists
-    x_labels = list(df_corr.columns)
-    y_labels = list(df_corr.index)
+            return any(tag in words for tag in sponsored_tags) or \
+                   any(phrase.lower() in caption.lower() for phrase in promotional_phrases) or \
+                   re.search(r'https?://\S+', caption) or contains_brand_name(caption)
+        return False  
 
-    # Create Heatmap
-    fig_corr = ff.create_annotated_heatmap(
-        z=corr_values, 
-        x=x_labels, 
-        y=y_labels, 
-        annotation_text=np.round(corr_values, 2),  # Show values in heatmap
-        colorscale="Viridis",  # Aesthetic color scheme
-        showscale=True
-    )
+    df["caption_sentiment"] = df["caption"].apply(analyze_sentiment)
+    df["is_sponsored"] = df["caption"].apply(detect_promotional_post)
+    return df
 
-    # Display Heatmap in Streamlit
-    st.plotly_chart(fig_corr, use_container_width=True)
-
-    # Sponsored Posts Analysis
+# Add this new function for sponsorship visualization
+def display_sponsorship_analysis(df_filtered):
+    """
+    Display sponsorship analysis visualization
+    """
     st.subheader("📢 Sponsored Posts Analysis")
-
-    # Count Sponsored vs Non-Sponsored Posts
+    
+    # Calculate sponsorship statistics
     promo_counts = df_filtered["is_sponsored"].value_counts().rename(
         index={False: "Non-Sponsored", True: "Sponsored"}
     )
-
-    # Create Pie Chart
+    
+    # Create pie chart
     fig_promo = px.pie(
         promo_counts,
         names=promo_counts.index,
@@ -284,12 +312,15 @@ else:
         title="Sponsored vs Non-Sponsored Posts",
         color_discrete_sequence=['#FF9B9B', '#9CC4E4']
     )
-
-    # Update Pie Chart Labels
+    
+    # Add percentage labels
     fig_promo.update_traces(
         textposition='inside',
         textinfo='percent+label'
     )
-
-    # Display Pie Chart in Streamlit
+    
+    # Display the chart
     st.plotly_chart(fig_promo, use_container_width=True)
+
+if not df_filtered.empty:
+    display_sponsorship_analysis(df_filtered)
