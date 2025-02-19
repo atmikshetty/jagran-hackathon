@@ -203,17 +203,23 @@ else:
 
     fig_spider = go.Figure()
     fig_spider.add_trace(go.Scatterpolar(
-        r=values + [values[0]],  
-        theta=categories + [categories[0]],  
+        r=values + [values[0]],
+        theta=categories + [categories[0]],
         fill='toself',
-        fillcolor='rgba(0, 0, 255, 0.6)',  
-        line=dict(color='darkblue'),
+        fillcolor=f'rgba{tuple(int(COLOR_SCHEME["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
+        line=dict(color=COLOR_SCHEME["primary"]),
         name="Emotion Distribution"
     ))
 
     fig_spider.update_layout(
+        **COMMON_LAYOUT,
         polar=dict(
-            radialaxis=dict(visible=True, range=[0, max(values) + 1]),
+            radialaxis=dict(
+                visible=True,
+                range=[0, max(values) + 1],
+                gridcolor=PLOT_GRIDCOLOR
+            ),
+            bgcolor=PLOT_BGCOLOR
         ),
         showlegend=False
     )
