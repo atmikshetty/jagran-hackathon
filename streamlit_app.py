@@ -293,3 +293,41 @@ else:
 
     # Display Pie Chart in Streamlit
     st.plotly_chart(fig_promo, use_container_width=True)
+
+    # Promotional Content Analysis
+    st.subheader("📢 Sponsored Content Analysis")
+
+    sponsored_counts = df["is_sponsored"].value_counts().reset_index()
+    sponsored_counts.columns = ["is_sponsored", "count"]
+    sponsored_counts["is_sponsored"] = sponsored_counts["is_sponsored"].map({0: "Not Sponsored", 1: "Sponsored"})
+
+    # Create a stunning bar chart
+    fig_sponsored = px.bar(
+        sponsored_counts,
+        x="is_sponsored",
+        y="count",
+        color="is_sponsored",
+        text="count",
+        title="📢 Sponsored vs Non-Sponsored Posts",
+        color_discrete_map={"Sponsored": "#FF4B4B", "Not Sponsored": "#1F77B4"},
+        labels={"is_sponsored": "Post Type", "count": "Number of Posts"},
+    )
+
+    # Enhance aesthetics
+    fig_sponsored.update_traces(
+        textfont_size=14,
+        textposition="outside",
+        marker_line_color="black",
+        marker_line_width=1.5
+    )
+
+    fig_sponsored.update_layout(
+        xaxis_title="Post Type",
+        yaxis_title="Count",
+        plot_bgcolor="#F8F9FA",
+        paper_bgcolor="#F8F9FA",
+        font=dict(family="Arial, sans-serif", size=14),
+        showlegend=False
+    )
+
+    st.plotly_chart(fig_sponsored, use_container_width=True)
