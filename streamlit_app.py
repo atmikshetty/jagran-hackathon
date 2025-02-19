@@ -244,7 +244,21 @@ else:
         title="Sentiment Distribution",
         color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"], COLOR_SCHEME["accent"]]
     )
-    fig_sentiment_pie.update_layout(**COMMON_LAYOUT)
+    fig_sentiment_pie.update_traces(
+        textposition='inside',
+        textinfo='percent+label',
+        textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
+        insidetextfont=dict(color=COLOR_SCHEME['text_light'])
+    )
+    fig_sentiment_pie.update_layout(
+        **COMMON_LAYOUT,
+        legend=dict(
+            bgcolor=COLOR_SCHEME['background'],
+            bordercolor=COLOR_SCHEME['text'],
+            borderwidth=1,
+            font=dict(color=COLOR_SCHEME['text'])
+        )
+    )
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
     # Word Cloud
