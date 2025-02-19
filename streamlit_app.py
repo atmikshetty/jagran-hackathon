@@ -119,6 +119,60 @@ def generate_summary(text_data):
     except Exception as e:
         print(f"Error generating summary: {e}")
         return "Summary generation failed."
+    
+def download_influencer_images(df, influencer_name, n=3):
+    """
+    Downloads up to 'n' images for the given influencer from the 'thumbnail_url' column.
+    Saves them locally in a folder named <influencer_name>_images/.
+    
+    Returns a list of local file paths to the downloaded images.
+    """
+    # Filter DataFrame for the selected influencer
+    df_filtered = df[df["influencer_name"] == influencer_name].copy()
+    
+    # Get up to 'n' unique thumbnail URLs
+    df_thumbnails = (
+        df_filtered[['thumbnail_url']]
+        .dropna()
+        .drop_duplicates()
+        .head(n)
+    )
+    
+    if df_thumbnails.empty:
+        return []
+    
+    # Create a local folder to store images, e.g., "fitgirl_08_images"
+    folder_name = f"{influencer_name}_images"
+    os.makedirs(folder_name, exist_ok=True)
+    
+    # Headers that mimic a browser request
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/105.0.0.0 Safari/537.36",
+        "Referer": "https://www.instagram.com/",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+    }
+    
+    local_paths = []
+    
+    for i, row in df_thumbnails.iterrows():
+        url = row["thumbnail_url"]
+        # Name each file with the influencer name and index
+        filename = os.path.join(folder_name, f"{influencer_name}_{i}.jpg")
+        
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                with open(filename, "wb") as f:
+                    f.write(response.content)
+                local_paths.append(filename)
+            else:
+                print(f"Failed to download image from {url} (status code: {response.status_code})")
+        except Exception as e:
+            print(f"Error downloading image from {url}: {e}")
+    
+    return local_paths
 
 df = compute_sentiment_and_promotion(df)
 
@@ -147,31 +201,19 @@ captions_text = "\n".join(captions_list)
 summary = generate_summary(captions_text)
 st.write(summary)
 
+# 3. Download up to 3 images for this influencer
+image_paths = download_influencer_images(df, influencer_name, n=3)
+
+# 4. Display images
 st.subheader(f"📸 {influencer_name}'s Recent Posts")
 
-# Assume df_filtered is your DataFrame with unique thumbnail URLs
-df_thumbnails = (
-    df_filtered[['thumbnail_url']]
-    .dropna()
-    .drop_duplicates()
-    .head(3)
-)
-
-if df_thumbnails.empty:
+if not image_paths:
     st.warning("No images available for this influencer.")
 else:
     cols = st.columns(3)
-    for index, (_, row) in enumerate(df_thumbnails.iterrows()):
-        thumbnail_url = row["thumbnail_url"]
-        # URL-encode the thumbnail URL for safe passing as a query parameter
-        encoded_url = urllib.parse.quote(thumbnail_url, safe="")
-        # Use your EC2 public IP and FastAPI port in the proxy_base_url
-        proxy_base_url = "http://13.60.9.163:8000/proxy-image"
-        proxy_url = f"{proxy_base_url}?url={encoded_url}"
-        
-        with cols[index % 3]:
-            st.image(proxy_url, caption=f"Post {index+1}", use_container_width=True)
-
+    for i, path in enumerate(image_paths):
+        with cols[i % 3]:
+            st.image(path, caption=f"Post {i+1}", use_container_width=True)
 
 if df_filtered.empty:
     st.warning("No data available for the selected influencer.")
