@@ -273,26 +273,21 @@ else:
 
     # Sponsored Posts Analysis
     st.subheader("📢 Sponsored Posts Analysis")
-
-    # Count Sponsored vs Non-Sponsored Posts
     promo_counts = df_filtered["is_sponsored"].value_counts().rename(
         index={False: "Non-Sponsored", True: "Sponsored"}
     )
 
-    # Create Pie Chart
     fig_promo = px.pie(
         promo_counts,
         names=promo_counts.index,
         values=promo_counts.values,
         title="Sponsored vs Non-Sponsored Posts",
-        color_discrete_sequence=['#FF9B9B', '#9CC4E4']
+        color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"]]
     )
 
-    # Update Pie Chart Labels
     fig_promo.update_traces(
         textposition='inside',
         textinfo='percent+label'
     )
-
-    # Display Pie Chart in Streamlit
+    fig_promo.update_layout(**COMMON_LAYOUT)
     st.plotly_chart(fig_promo, use_container_width=True)
