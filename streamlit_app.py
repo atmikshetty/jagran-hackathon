@@ -292,9 +292,26 @@ else:
         y=y_labels,
         annotation_text=np.round(corr_values, 2),
         colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
-        showscale=True
+        showscale=True,
+        font_colors=['white', 'black']  # Automatically choose contrasting text colors
     )
-    fig_corr.update_layout(**COMMON_LAYOUT)
+    
+    fig_corr.update_layout(
+        **COMMON_LAYOUT,
+        xaxis=dict(
+            side='bottom',
+            tickfont=dict(color=COLOR_SCHEME['text']),
+            gridcolor=PLOT_GRIDCOLOR
+        ),
+        yaxis=dict(
+            tickfont=dict(color=COLOR_SCHEME['text']),
+            gridcolor=PLOT_GRIDCOLOR
+        ),
+        coloraxis_colorbar=dict(
+            tickfont=dict(color=COLOR_SCHEME['text']),
+            title=dict(color=COLOR_SCHEME['text'])
+        )
+    )
     st.plotly_chart(fig_corr, use_container_width=True)
 
     # Sponsored Posts Analysis
@@ -313,7 +330,17 @@ else:
 
     fig_promo.update_traces(
         textposition='inside',
-        textinfo='percent+label'
+        textinfo='percent+label',
+        textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
+        insidetextfont=dict(color=COLOR_SCHEME['text_light'])
     )
-    fig_promo.update_layout(**COMMON_LAYOUT)
+    fig_promo.update_layout(
+        **COMMON_LAYOUT,
+        legend=dict(
+            bgcolor=COLOR_SCHEME['background'],
+            bordercolor=COLOR_SCHEME['text'],
+            borderwidth=1,
+            font=dict(color=COLOR_SCHEME['text'])
+        )
+    )
     st.plotly_chart(fig_promo, use_container_width=True)
