@@ -27,14 +27,17 @@ COLOR_SCHEME = {
     'primary': '#1f77b4',  # Blue
     'secondary': '#ff7f0e',  # Orange
     'accent': '#2ca02c',  # Green
-    'neutral': '#7f7f7f'  # Gray
+    'neutral': '#7f7f7f',  # Gray
+    'background': '#ffffff',  # White
+    'text': '#000000',      # Black
+    'text_light': '#ffffff'  # White text for dark backgrounds
 }
 
 # Define consistent layout parameters
 PLOT_HEIGHT = 500
 PLOT_WIDTH = 800
-PLOT_BGCOLOR = 'white'
-PLOT_GRIDCOLOR = '#f0f0f0'
+PLOT_BGCOLOR = COLOR_SCHEME['background']
+PLOT_GRIDCOLOR = '#e0e0e0'  # Slightly darker grid for better visibility
 
 # Define common layout settings
 COMMON_LAYOUT = {
@@ -42,7 +45,7 @@ COMMON_LAYOUT = {
     'width': PLOT_WIDTH,
     'paper_bgcolor': PLOT_BGCOLOR,
     'plot_bgcolor': PLOT_BGCOLOR,
-    'font': {'size': 12, 'color': '#2e2e2e'},
+    'font': {'size': 12, 'color': COLOR_SCHEME['text']},
     'margin': dict(l=50, r=50, t=50, b=50)
 }
 
@@ -217,7 +220,14 @@ else:
             radialaxis=dict(
                 visible=True,
                 range=[0, max(values) + 1],
-                gridcolor=PLOT_GRIDCOLOR
+                gridcolor=PLOT_GRIDCOLOR,
+                linecolor=COLOR_SCHEME['text'],
+                tickfont={'color': COLOR_SCHEME['text']}
+            ),
+            angularaxis=dict(
+                linecolor=COLOR_SCHEME['text'],
+                gridcolor=PLOT_GRIDCOLOR,
+                tickfont={'color': COLOR_SCHEME['text']}
             ),
             bgcolor=PLOT_BGCOLOR
         ),
