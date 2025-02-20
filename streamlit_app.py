@@ -463,3 +463,18 @@ else:
         )
     )
     st.plotly_chart(fig_promo, use_container_width=True)
+
+    # Top 10 Topics 
+    st.subheader("🎯 Top 10 Topics")
+
+    topic_analyzer = TopicMap(df, text_column="caption")
+
+    if influencer_name:
+        topics = topic_analyzer.get_topics_for_influencer(influencer_name)
+        
+        if topics:
+            st.write("Most discussed topics by this influencer:")
+            for i, topic in enumerate(topics[:10], 1):
+                st.write(f"{i}. **{topic}**")
+        else:
+            st.write("No topics could be analyzed for this influencer.")
