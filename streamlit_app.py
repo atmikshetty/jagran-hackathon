@@ -101,7 +101,7 @@ class TopicMap:
         self.df = df
         self.text_column = text_column
         
-        self.api_key = st.secrets["openai_api_key"]
+        self.api_key = st.secrets["openai"]["openai_api_key"]
         openai.api_key = self.api_key
 
     def preprocess_text(self, text):
