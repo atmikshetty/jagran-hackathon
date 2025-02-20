@@ -130,7 +130,7 @@ class TopicMap:
         Based on these samples, suggest a concise and descriptive label for this cluster (2-3 words maximum).
         """
         try:
-            client = OpenAI(api_key=st.secrets["openai"]["openai_api_key"])  # Use the correct key
+            client = OpenAI(api_key=st.secrets["openai"]["openai_api_key"]) 
 
             response = client.chat.completions.create(
                 model="gpt-4",
