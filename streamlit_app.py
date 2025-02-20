@@ -22,7 +22,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.cluster.hierarchy import linkage, fcluster
 
 gemini_api_key = st.secrets["gemini"]["api_key"]
-openai_api_key = st.secrets["openai"]["api_key"]
+openai_api_key = st.secrets["openai"]["openai_api_key"]
 
 # Configure the genai client
 genai.configure(api_key=gemini_api_key)
