@@ -17,6 +17,9 @@ import google.generativeai as genai
 import os
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
+import openai
+from sklearn.feature_extraction.text import TfidfVectorizer
+from scipy.cluster.hierarchy import linkage, fcluster
 
 api_key = st.secrets["GEMINI_API_KEY"]
 
