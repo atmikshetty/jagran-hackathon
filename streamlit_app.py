@@ -21,10 +21,14 @@ import openai
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.cluster.hierarchy import linkage, fcluster
 
-api_key = st.secrets["GEMINI_API_KEY"]
+gemini_api_key = st.secrets["gemini"]["api_key"]
+openai_api_key = st.secrets["openai"]["api_key"]
 
 # Configure the genai client
-genai.configure(api_key=api_key)
+genai.configure(api_key=gemini_api_key)
+
+# configure the openai client
+openai.api_key = openai_api_key
 
 # Define a consistent color scheme
 COLOR_SCHEME = {
