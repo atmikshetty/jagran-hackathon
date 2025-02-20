@@ -18,6 +18,7 @@ import os
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
 import openai
+from openai import OpenAI
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.cluster.hierarchy import linkage, fcluster
 
@@ -129,7 +130,9 @@ class TopicMap:
         Based on these samples, suggest a concise and descriptive label for this cluster (2-3 words maximum).
         """
         try:
-            response = openai.ChatCompletion.create(
+            client = OpenAI(api_key=st.secrets["openai"]["openai_api_key"])  # Use the correct key
+
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": "You are an expert in clustering and text analysis."},
@@ -138,7 +141,7 @@ class TopicMap:
                 max_tokens=50,
                 temperature=0.7
             )
-            return response['choices'][0]['message']['content'].strip()
+            return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"Error generating label: {e}")
             return "Unlabeled Topic"
