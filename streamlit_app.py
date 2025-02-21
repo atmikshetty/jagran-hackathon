@@ -213,7 +213,7 @@ except OSError:
 st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layout="wide")
 
 # Title and Introduction
-st.title(f" ## Welcome to InfluenceCheck")
+st.write(f" ## Welcome to InfluenceCheck")
 
 st.write(f"#####  A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries. ")
 st.write(f"##### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
