@@ -89,6 +89,14 @@ st.markdown(
     """
 )
 
+# Initialize session state for the dashboard visibility
+if 'show_dashboard' not in st.session_state:
+    st.session_state.show_dashboard = False
+
+# Add the Explore Dashboard button
+if st.button("🚀 Explore Dashboard", type="primary", use_container_width=True):
+    st.session_state.show_dashboard = True
+
 # Initialize VADER Sentiment Analyzer
 analyzer = SentimentIntensityAnalyzer()
 
