@@ -333,6 +333,132 @@ def load_influencer_images(influencer_name):
     
     return images
 
+# Update the spider plot
+def create_spider_plot(emotion_counts, theme_colors=None):
+    if theme_colors is None:
+        theme_colors = get_current_colors()
+    
+    categories = list(emotion_counts.keys())
+    values = list(emotion_counts.values())
+    
+    fig_spider = go.Figure()
+    fig_spider.add_trace(go.Scatterpolar(
+        r=values + [values[0]],
+        theta=categories + [categories[0]],
+        fill='toself',
+        fillcolor=f'rgba{tuple(int(theme_colors["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
+        line=dict(color=theme_colors["primary"]),
+        name="Emotion Distribution"
+    ))
+    
+    layout = get_plot_layout(theme_colors)
+    layout.update({
+        "polar": dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, max(values) + 1],
+                gridcolor=theme_colors['grid'],
+                linecolor=theme_colors['text'],
+                tickfont={'color': theme_colors['text'], 'size': 16}
+            ),
+            angularaxis=dict(
+                linecolor=theme_colors['text'],
+                gridcolor=theme_colors['grid'],
+                tickfont={'color': theme_colors['text'], 'size': 18}
+            ),
+            bgcolor='rgba(0,0,0,0)'
+        ),
+        "showlegend": False
+    })
+    
+    fig_spider.update_layout(**layout)
+    return fig_spider
+
+# Update the sentiment pie chart
+def create_sentiment_pie(sentiment_counts, theme_colors=None):
+    if theme_colors is None:
+        theme_colors = get_current_colors()
+    
+    fig_sentiment_pie = px.pie(
+        names=sentiment_counts.index,
+        values=sentiment_counts.values,
+        title="Sentiment Distribution",
+        color_discrete_sequence=[
+            theme_colors["primary"],
+            theme_colors["secondary"],
+            theme_colors["accent"]
+        ]
+    )
+    
+    fig_sentiment_pie.update_traces(
+        textposition='inside',
+        textinfo='percent+label',
+        textfont=dict(color=theme_colors['text_contrast'], size=18),
+        insidetextfont=dict(color=theme_colors['text_contrast'], size=20)
+    )
+    
+    layout = get_plot_layout(theme_colors)
+    layout.update({
+        "legend": dict(
+            font=dict(color=theme_colors['text']),
+            bgcolor='rgba(0,0,0,0)'
+        )
+    })
+    
+    fig_sentiment_pie.update_layout(**layout)
+    return fig_sentiment_pie
+
+# Update the correlation heatmap
+def create_correlation_heatmap(df_corr, theme_colors=None):
+    if theme_colors is None:
+        theme_colors = get_current_colors()
+    
+    corr_values = df_corr.to_numpy()
+    x_labels = list(df_corr.columns)
+    y_labels = list(df_corr.index)
+    
+    fig_corr = ff.create_annotated_heatmap(
+        z=corr_values,
+        x=x_labels,
+        y=y_labels,
+        annotation_text=np.round(corr_values, 2),
+        colorscale=[[0, theme_colors["primary"]], [1, theme_colors["secondary"]]],
+        showscale=True,
+        font_colors=[theme_colors['text_contrast'], theme_colors['text_contrast']]
+    )
+    
+    layout = get_plot_layout(theme_colors)
+    layout.update({
+        "width": 500,
+        "height": 500,
+        "xaxis": dict(
+            showgrid=False,
+            zeroline=False,
+            tickfont=dict(color=theme_colors['text'], size=16),
+            title_font=dict(color=theme_colors['text']),
+            side="bottom"
+        ),
+        "yaxis": dict(
+            showgrid=False,
+            zeroline=False,
+            tickfont=dict(color=theme_colors['text'], size=16),
+            title_font=dict(color=theme_colors['text'])
+        ),
+        "coloraxis_colorbar": dict(
+            tickfont=dict(color=theme_colors['text'], size=16),
+            title_font=dict(color=theme_colors['text'])
+        )
+    })
+    
+    fig_corr.update_layout(**layout)
+    
+    # Update annotations
+    for annotation in fig_corr.layout.annotations:
+        annotation.font.color = theme_colors['text_contrast']
+        annotation.font.size = 16
+    
+    return fig_corr
+
 # Initialize session state for the dashboard visibility
 if 'show_dashboard' not in st.session_state:
     st.session_state.show_dashboard = False
