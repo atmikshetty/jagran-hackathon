@@ -379,7 +379,7 @@ else:
     st.plotly_chart(fig_spider, use_container_width=True)
 
    # Sentiment Analysis Pie Chart
-    st.subheader("📊 Sentiment Distribution")
+    st.subheader("📊 Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content. 😊😡😐")
     sentiment_counts = df_filtered["caption_sentiment"].value_counts()
 
     fig_sentiment_pie = px.pie(
@@ -415,7 +415,6 @@ else:
 
     fig_sentiment_pie.update_layout(**custom_layout)
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
-
 
     # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
