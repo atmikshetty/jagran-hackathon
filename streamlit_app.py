@@ -73,10 +73,11 @@ st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layou
 
 # Title and Introduction
 st.title("Welcome to InfluenceCheck")
+
 st.markdown(
     """
-    #### A platform designed to analyze and verify influencer content in the **beauty, fitness, and lifestyle** industries.
-    #### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.
+    #### *A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries.*
+    #### *We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.*
     """
 )
 
@@ -84,10 +85,10 @@ st.markdown(
 st.markdown(
     """
     ## Why InfluenceCheck?
-    - #### **Track Sponsored Content**: Identify the percentage of posts that are promotional.
-    - #### **Verify Product Claims**: Check if influencers promote genuine products or misinformation.
-    - #### **Sentiment Analysis**: Understand audience reactions to influencer recommendations.
-    - #### **Impact on Audience**: Explore how influencers shape consumer behavior and opinions.
+    - #### Track Sponsored Content: *Identify the percentage of posts that are promotional.*
+    - #### Verify Product Claims: *Check if influencers promote genuine products or misinformation.*
+    - #### Sentiment Analysis: *Understand audience reactions to influencer recommendations.*
+    - #### Impact on Audience: *Explore how influencers shape consumer behavior and opinions.*
     
     ## InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.
     """
