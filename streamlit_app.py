@@ -293,15 +293,21 @@ if df_filtered.empty:
 else:
     total_posts = len(df_filtered)
     most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
-    
+
+    # 4x4 Grid
+    col1, col2, col3, col4 = st.columns(4)
+
     st.write(f"### 📌 {influencer_name} - Summary")
-    st.metric("Total Posts", total_posts)
-    st.metric("Most Liked Post", f"{most_liked_post['like_count']} likes")
+    with col1:
+        st.metric("Total Posts", total_posts)
 
-    # Fact Checking Details
-    st.write(f"### 🕵️ Fact Check for {influencer_name}")
+    with col2:
+        st.metric("Most Liked Post", f"{most_liked_post['like_count']} likes")
+    
+    with col3:
+        # Fact Checking Details
+        st.metric("Claims Found in Posts", "0%")
 
-    st.write(f"Percentage of Claims Found in Posts: 0%")
 
     # Emotion Analysis - Spider Plot
     st.subheader("📊 Emotion Analysis (Spider Plot)")
