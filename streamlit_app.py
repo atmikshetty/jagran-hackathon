@@ -423,7 +423,7 @@ else:
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
     # Correlation Heatmap
-    st.subheader("📊 Correlation Heatmap")
+    st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes, comments, and sentiment scores to understand audience interaction trends. 🔥📈")
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
     df_corr = df_filtered[numeric_cols].corr()
 
@@ -473,54 +473,9 @@ else:
 
     st.plotly_chart(fig_corr, use_container_width=True)
 
-
-    # Sponsored Posts Analysis
-    st.subheader("📢 Sponsored Posts Analysis")
-
-    # Rename True/False to human-readable labels
-    promo_counts = df_filtered["is_sponsored"].value_counts().rename(
-        index={False: "Non-Sponsored", True: "Sponsored"}
-    )
-
-    # Create Pie Chart
-    fig_promo = px.pie(
-        names=promo_counts.index,
-        values=promo_counts.values,
-        title="Sponsored vs Non-Sponsored Posts",
-        color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"]]
-    )
-
-    # Update Pie Chart Traces
-    fig_promo.update_traces(
-        textposition='inside',
-        textinfo='percent+label',
-        textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
-        insidetextfont=dict(color=COLOR_SCHEME['text_light'])
-    )
-
-    # Copy COMMON_LAYOUT to avoid multiple argument conflicts
-    custom_layout = COMMON_LAYOUT.copy()
-    custom_layout.update({
-        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-        "legend": dict(
-            bgcolor=COLOR_SCHEME['background'],
-            bordercolor=COLOR_SCHEME['text'],
-            borderwidth=1,
-            font=dict(color=COLOR_SCHEME['text'])
-        )
-    })
-
-    # Apply the layout updates
-    fig_promo.update_layout(**custom_layout)
-
-    # Render in Streamlit
-    st.plotly_chart(fig_promo, use_container_width=True)
-
-
     # Top 10 Topics 
-    st.subheader("🎯 Top 10 Topics")
-
+    st.subheader("🎯 Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest. 🔥💬")
+    
     topic_analyzer = TopicMap(df, text_column="caption")
 
     if influencer_name:
