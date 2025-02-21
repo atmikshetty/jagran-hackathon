@@ -494,6 +494,8 @@ if st.session_state.show_dashboard:
 
         # Force background transparency for heatmap
         fig_corr.update_layout(
+            width =500,
+            height = 500,
             paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
             plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
             xaxis=dict(
