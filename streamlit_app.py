@@ -382,7 +382,7 @@ if st.session_state.show_dashboard:
             st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
         # Emotion Analysis - Spider Plot
-        st.subheader("Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post.")
+        st.subheader("What emotions drive audience interaction with influencer content?")
         emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
 
         for caption in df_filtered["caption"].dropna():
@@ -432,7 +432,7 @@ if st.session_state.show_dashboard:
 
 
     # Sentiment Analysis Pie Chart
-        st.subheader("Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content.")
+        st.subheader("Audience Sentiment Analysis: A Breakdown of Reactions to Influencer Content")
         sentiment_counts = df_filtered["caption_sentiment"].value_counts()
 
         fig_sentiment_pie = px.pie(
@@ -470,7 +470,7 @@ if st.session_state.show_dashboard:
         st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
         # Correlation Heatmap
-        st.subheader("Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends.")
+        st.subheader("Understanding Influencer Impact via Audience Reactions and Engagement Correlations")
         numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
         df_corr = df_filtered[numeric_cols].corr()
 
@@ -525,7 +525,7 @@ if st.session_state.show_dashboard:
         st.plotly_chart(fig_corr, use_container_width=True)
 
         # Top 10 Topics 
-        st.subheader("Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest.")
+        st.subheader("What's the conversation around influencer content?")
         
         topic_analyzer = TopicMap(df, text_column="caption")
 
