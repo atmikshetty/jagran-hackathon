@@ -529,7 +529,7 @@ if st.session_state.show_dashboard:
             topics = topic_analyzer.get_topics_for_influencer(influencer_name)
             
             if topics:
-                st.write("Most discussed topics by this influencer:")
+                st.write("### Most discussed topics by this influencer:")
                 for i, topic in enumerate(topics[:10], 1):
                     st.write(f"{i}. **{topic}**")
             else:
