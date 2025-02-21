@@ -81,6 +81,38 @@ COLOR_SCHEME = {
     }
 }
 
+# Function to get current color scheme
+def get_current_colors():
+    theme = get_theme()
+    return COLOR_SCHEME[theme]
+
+# Update the layout settings function
+def get_plot_layout(theme_colors=None):
+    if theme_colors is None:
+        theme_colors = get_current_colors()
+    
+    return {
+        'height': 500,
+        'width': 800,
+        'paper_bgcolor': 'rgba(0,0,0,0)',
+        'plot_bgcolor': 'rgba(0,0,0,0)',
+        'font': {
+            'size': 12,
+            'color': theme_colors['text']
+        },
+        'margin': dict(l=50, r=50, t=50, b=50),
+        'xaxis': dict(
+            gridcolor=theme_colors['grid'],
+            tickfont=dict(color=theme_colors['text']),
+            title_font=dict(color=theme_colors['text'])
+        ),
+        'yaxis': dict(
+            gridcolor=theme_colors['grid'],
+            tickfont=dict(color=theme_colors['text']),
+            title_font=dict(color=theme_colors['text'])
+        )
+    }
+
 # Define consistent layout parameters
 PLOT_HEIGHT = 500
 PLOT_WIDTH = 800
