@@ -299,7 +299,7 @@ if st.button("Explore Dashboard", type="primary"):
 if st.session_state.show_dashboard:
 
     st.subheader(f"Select an Influencer:")
-    influencer_name = st.selectbox("Label", get_influencer_names(), label_visibility=False)
+    influencer_name = st.selectbox("Label", get_influencer_names(), label_visibility="hidden")
     df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
     # User summary
