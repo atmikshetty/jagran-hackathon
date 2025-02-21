@@ -506,11 +506,11 @@ if st.session_state.show_dashboard:
             yaxis=dict(
                 showgrid=False,
                 zeroline=False,
-                tickfont=dict(color="white"),
+                tickfont=dict(color="white", size=16),
                 title_font=dict(color="white")
             ),
             coloraxis_colorbar=dict(
-                tickfont=dict(color="white"),
+                tickfont=dict(color="white", size=16),
                 title_font=dict(color="white")
             )
         )
