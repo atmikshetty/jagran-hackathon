@@ -313,6 +313,9 @@ if df_filtered.empty:
 else:
     total_posts = len(df_filtered)
     most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
+    sponsored_count = df_filtered["is_sponsored"].sum()
+    non_sponsored_count = total_posts - sponsored_count
+    sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
 
     st.write(f"### 📌 {influencer_name} - Profile Summary")
 
@@ -328,6 +331,9 @@ else:
     with col3:
         # Fact Checking Details
         st.metric("Claims Found in Posts", "0%")
+
+    with col4:
+        st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
 
     # Emotion Analysis - Spider Plot
