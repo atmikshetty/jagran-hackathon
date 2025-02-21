@@ -335,9 +335,12 @@ else:
         name="Emotion Distribution"
     ))
 
-    fig_spider.update_layout(
-        **COMMON_LAYOUT,
-        polar=dict(
+    # Create a copy of COMMON_LAYOUT to avoid duplicate keyword arguments
+    custom_layout = COMMON_LAYOUT.copy()
+    custom_layout.update({
+        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        "polar": dict(
             radialaxis=dict(
                 visible=True,
                 range=[0, max(values) + 1],
@@ -352,11 +355,12 @@ else:
             ),
             bgcolor=PLOT_BGCOLOR
         ),
-        showlegend=False,
-        plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
-        paper_bgcolor='rgba(0,0,0,0)'  # Transparent figure background
-    )
+        "showlegend": False
+    })
+
+    fig_spider.update_layout(**custom_layout)
     st.plotly_chart(fig_spider, use_container_width=True)
+
 
     # Sentiment Analysis Pie Chart
     st.subheader("📊 Sentiment Distribution")
