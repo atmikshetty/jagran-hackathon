@@ -58,6 +58,9 @@ COMMON_LAYOUT = {
     'margin': dict(l=50, r=50, t=50, b=50)
 }
 
+plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
+paper_bgcolor='rgba(0,0,0,0)'  # Transparent figure background
+
 # Install and load spaCy model
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -294,8 +297,8 @@ else:
     total_posts = len(df_filtered)
     most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
 
-    st.write(f"### 📌 {influencer_name} - Summary")
-    
+    st.write(f"### 📌 {influencer_name} - Profile Summary")
+
     # 4x4 Grid
     col1, col2, col3, col4 = st.columns(4)
 
