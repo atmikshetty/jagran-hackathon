@@ -327,6 +327,26 @@ if st.session_state.show_dashboard:
 
         st.write(f"### 📌 {influencer_name} - Profile Summary")
 
+        # sizes
+        st.markdown(
+            """
+            <style>
+            div[data-testid="metric-container"] {
+                font-size: 24px !important; /* Increases text size */
+            }
+            div[data-testid="stMetricLabel"] {
+                font-size: 20px !important; /* Increases label size */
+                font-weight: bold;
+            }
+            div[data-testid="stMetricValue"] {
+                font-size: 28px !important; /* Increases value size */
+                color: #ff4b4b; /* Optional: Change value color */
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
         # 4x4 Grid
         col1, col2, col3, col4 = st.columns(4)
 
