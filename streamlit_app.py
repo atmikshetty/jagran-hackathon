@@ -426,35 +426,26 @@ else:
 
     # Create a copy of COMMON_LAYOUT to update without conflict
     custom_layout = COMMON_LAYOUT.copy()
+
     fig_corr.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent figure background
         xaxis=dict(
-            side='bottom',
-            tickfont=dict(color="white"),  # Ensure x-axis labels are white
-            title=dict(text="X Axis", font=dict(color="white")),  # X-axis title color
+            tickfont=dict(color="white"),  # X-axis labels in white
+            title_font=dict(color="white"),  # X-axis title in white
             gridcolor=PLOT_GRIDCOLOR
         ),
         yaxis=dict(
-            tickfont=dict(color="white"),  # Ensure y-axis labels are white
-            title=dict(text="Y Axis", font=dict(color="white")),  # Y-axis title color
+            tickfont=dict(color="white"),  # Y-axis labels in white
+            title_font=dict(color="white"),  # Y-axis title in white
             gridcolor=PLOT_GRIDCOLOR
         ),
         coloraxis_colorbar=dict(
-            tickfont=dict(color="white"),  # Ensure color bar tick labels are white
-            title=dict(text="Correlation", font=dict(color="white"))  # Ensure color bar title is white
+            tickfont=dict(color="white"),  # Color bar tick labels in white
+            title_font=dict(color="white")  # Color bar title in white
         )
     )
 
-    # Explicitly update x and y axis label colors (sometimes necessary)
-    fig_corr.update_xaxes(
-        tickfont=dict(color="white"),
-        title_font=dict(color="white")
-    )
-    fig_corr.update_yaxes(
-        tickfont=dict(color="white"),
-        title_font=dict(color="white")
-    )
 
     fig_corr.update_layout(**custom_layout)
     st.plotly_chart(fig_corr, use_container_width=True)
