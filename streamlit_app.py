@@ -352,7 +352,9 @@ else:
             ),
             bgcolor=PLOT_BGCOLOR
         ),
-        showlegend=False
+        showlegend=False,
+        plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
+        paper_bgcolor='rgba(0,0,0,0)'  # Transparent figure background
     )
     st.plotly_chart(fig_spider, use_container_width=True)
 
