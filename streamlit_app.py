@@ -57,15 +57,28 @@ def get_theme():
     # Default to light if we can't detect the theme
     return theme if theme in ['light', 'dark'] else 'light'
 
-# Define a consistent color scheme
+# Define color schemes for both themes
 COLOR_SCHEME = {
-    'primary': '#1f77b4',  # Blue
-    'secondary': '#ff7f0e',  # Orange
-    'accent': '#2ca02c',  # Green
-    'neutral': '#7f7f7f',  # Gray
-    'background': '#ffffff',  # White
-    'text': '#000000',      # Black
-    'text_light': '#ffffff'  # White text for dark backgrounds
+    'light': {
+        'primary': '#1f77b4',  # Blue
+        'secondary': '#ff7f0e',  # Orange
+        'accent': '#2ca02c',  # Green
+        'neutral': '#7f7f7f',  # Gray
+        'background': '#ffffff',  # White
+        'text': '#000000',      # Black
+        'grid': '#e0e0e0',      # Light gray for grid
+        'text_contrast': '#000000'  # Black text for contrast
+    },
+    'dark': {
+        'primary': '#1f77b4',  # Blue
+        'secondary': '#ff7f0e',  # Orange
+        'accent': '#2ca02c',  # Green
+        'neutral': '#7f7f7f',  # Gray
+        'background': '#0e1117',  # Dark background
+        'text': '#ffffff',      # White
+        'grid': '#2b2b2b',      # Dark gray for grid
+        'text_contrast': '#ffffff'  # White text for contrast
+    }
 }
 
 # Define consistent layout parameters
