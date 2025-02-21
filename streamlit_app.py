@@ -302,7 +302,7 @@ else:
         st.metric("Total Posts", total_posts)
 
     with col2:
-        st.metric("Most Liked Post", f"{most_liked_post['like_count']} likes")
+        st.metric("Most Liked Post", f"{most_liked_post['like_count']}")
     
     with col3:
         # Fact Checking Details
