@@ -31,11 +31,10 @@ genai.configure(api_key=gemini_api_key)
 # configure the openai client
 openai.api_key = openai_api_key
 
-# Define a function to detect the current theme
 def get_theme():
-    # Try to get theme from query params first
-    query_params = st.experimental_get_query_params()
-    theme = query_params.get("theme", [None])[0]
+    # Use the new non-experimental API
+    query_params = st.query_params
+    theme = query_params.get("theme", None)
     
     # If theme is not in query params, check local storage via JavaScript
     if theme is None:
@@ -57,6 +56,71 @@ def get_theme():
     
     # Default to light if we can't detect the theme
     return theme if theme in ['light', 'dark'] else 'light'
+
+def apply_metric_styles():
+    st.markdown(
+        """
+        <style>
+        /* Base styles for metric containers */
+        div[data-testid="metric-container"] {
+            background-color: rgba(28, 131, 225, 0.1);
+            border: 1px solid rgba(28, 131, 225, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Style for metric labels */
+        div[data-testid="metric-container"] label {
+            color: var(--text-color);
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+        }
+
+        /* Style for metric values */
+        div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+            font-size: 2rem !important;
+            color: var(--text-color);
+            font-weight: 700 !important;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            div[data-testid="metric-container"] label {
+                font-size: 0.875rem !important;
+            }
+            div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+                font-size: 1.5rem !important;
+            }
+        }
+
+        /* Dark mode specific styles */
+        [data-theme="dark"] div[data-testid="metric-container"] {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Function to display metrics with enhanced styling
+def display_metrics(total_posts, most_liked_post, sponsored_percentage):
+    apply_metric_styles()
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Posts", f"{total_posts:,}")
+    
+    with col2:
+        st.metric("Most Liked Post", f"{most_liked_post:,}")
+    
+    with col3:
+        st.metric("Claims Found in Posts", "0%")
+    
+    with col4:
+        st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
 # Define the base color scheme
 COLOR_SCHEME = {
