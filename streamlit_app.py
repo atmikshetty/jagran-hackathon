@@ -362,33 +362,44 @@ else:
     st.plotly_chart(fig_spider, use_container_width=True)
 
 
-    # Sentiment Analysis Pie Chart
+   # Sentiment Analysis Pie Chart
     st.subheader("📊 Sentiment Distribution")
     sentiment_counts = df_filtered["caption_sentiment"].value_counts()
+
     fig_sentiment_pie = px.pie(
         names=sentiment_counts.index,
         values=sentiment_counts.values,
         title="Sentiment Distribution",
-        color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"], COLOR_SCHEME["accent"]]
+        color_discrete_sequence=[
+            COLOR_SCHEME["primary"], 
+            COLOR_SCHEME["secondary"], 
+            COLOR_SCHEME["accent"]
+        ]
     )
+
     fig_sentiment_pie.update_traces(
         textposition='inside',
         textinfo='percent+label',
         textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
         insidetextfont=dict(color=COLOR_SCHEME['text_light'])
     )
-    fig_sentiment_pie.update_layout(
-        **COMMON_LAYOUT,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        legend=dict(
+
+    # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
+    custom_layout = COMMON_LAYOUT.copy()
+    custom_layout.update({
+        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        "legend": dict(
             bgcolor=COLOR_SCHEME['background'],
             bordercolor=COLOR_SCHEME['text'],
             borderwidth=1,
             font=dict(color=COLOR_SCHEME['text'])
         )
-    )
+    })
+
+    fig_sentiment_pie.update_layout(**custom_layout)
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
+
 
     # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
