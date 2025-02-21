@@ -678,7 +678,10 @@ if st.session_state.show_dashboard:
         # fig_sentiment_pie.update_layout(**custom_layout)
         # st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
-        fig_sentiment_pie = create_sentiment_pie(sentiment_counts, theme_colors)
+         # For the sentiment pie chart
+        st.subheader("Audience Sentiment Analysis: A Breakdown of Reactions to Influencer Content")
+        sentiment_counts = df_filtered["caption_sentiment"].value_counts()
+        fig_sentiment_pie = create_sentiment_pie(sentiment_counts)
         st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
         # Correlation Heatmap
