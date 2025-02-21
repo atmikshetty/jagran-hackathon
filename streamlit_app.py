@@ -72,14 +72,14 @@ except OSError:
 st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layout="wide")
 
 # Title and Introduction
-st.title("📢 InfluenceCheck - Misinformation Detection & Fact-Checking Dashboard")
+st.title("InfluenceCheck - Misinformation Detection & Fact-Checking Dashboard")
 st.write("Welcome to InfluenceCheck, a platform designed to analyze and verify influencer content in the **beauty, fitness, and lifestyle** industries. "
          "We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
 
 # Mission Statement
 st.markdown(
     """
-    ### 🚀 Why InfluenceCheck?
+    ###Why InfluenceCheck?
     - **Track Sponsored Content**: Identify the percentage of posts that are promotional.
     - **Verify Product Claims**: Check if influencers promote genuine products or misinformation.
     - **Sentiment Analysis**: Understand audience reactions to influencer recommendations.
@@ -276,7 +276,7 @@ df = load_data()
 df = compute_sentiment_and_promotion(df)
 
 # Add the Explore Dashboard button
-if st.button("🚀 Explore Dashboard", type="primary"):
+if st.button("Explore Dashboard", type="primary"):
     st.session_state.show_dashboard = True
 
 if st.session_state.show_dashboard:
@@ -285,7 +285,7 @@ if st.session_state.show_dashboard:
     df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
     # User summary
-    st.subheader(f"✨ {influencer_name}'s Bio")
+    st.subheader(f"{influencer_name}'s Bio")
 
     # top 10 posts
     df_captions = (
@@ -303,7 +303,7 @@ if st.session_state.show_dashboard:
     st.write(summary)
 
     # Recent Images, Only 3
-    st.subheader(f"✨ {influencer_name}'s Recent Posts")
+    st.subheader(f"{influencer_name}'s Recent Posts")
 
     if influencer_name:
         # Display images in a horizontal layout
@@ -325,7 +325,7 @@ if st.session_state.show_dashboard:
         non_sponsored_count = total_posts - sponsored_count
         sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
 
-        st.write(f"### 📌 {influencer_name} - Profile Summary")
+        st.write(f"### {influencer_name} - Profile Summary")
 
         # sizes
         st.markdown(
@@ -364,7 +364,7 @@ if st.session_state.show_dashboard:
             st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
         # Emotion Analysis - Spider Plot
-        st.subheader("📊 Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post. 🚀")
+        st.subheader("Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post.")
         emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
 
         for caption in df_filtered["caption"].dropna():
@@ -414,7 +414,7 @@ if st.session_state.show_dashboard:
 
 
     # Sentiment Analysis Pie Chart
-        st.subheader("📊 Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content. 😊😡😐")
+        st.subheader("Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content.")
         sentiment_counts = df_filtered["caption_sentiment"].value_counts()
 
         fig_sentiment_pie = px.pie(
@@ -452,7 +452,7 @@ if st.session_state.show_dashboard:
         st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
         # Correlation Heatmap
-        st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends. 🔥📈")
+        st.subheader("Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends.")
         numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
         df_corr = df_filtered[numeric_cols].corr()
 
@@ -503,7 +503,7 @@ if st.session_state.show_dashboard:
         st.plotly_chart(fig_corr, use_container_width=True)
 
         # Top 10 Topics 
-        st.subheader("🎯 Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest. 🔥💬")
+        st.subheader("Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest.")
         
         topic_analyzer = TopicMap(df, text_column="caption")
 
