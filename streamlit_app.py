@@ -31,6 +31,32 @@ genai.configure(api_key=gemini_api_key)
 # configure the openai client
 openai.api_key = openai_api_key
 
+def get_theme():
+    # Try to get theme from query params first
+    query_params = st.experimental_get_query_params()
+    theme = query_params.get("theme", [None])[0]
+    
+    # If theme is not in query params, check local storage via JavaScript
+    if theme is None:
+        # Insert JavaScript to check local storage
+        st.markdown(
+            """
+            <script>
+                var theme = localStorage.getItem('theme');
+                if (theme) {
+                    window.parent.postMessage({
+                        type: 'streamlit:setQueryParam',
+                        queryParams: { theme: theme }
+                    }, '*');
+                }
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
+    
+    # Default to light if we can't detect the theme
+    return theme if theme in ['light', 'dark'] else 'light'
+
 # Define a consistent color scheme
 COLOR_SCHEME = {
     'primary': '#1f77b4',  # Blue
