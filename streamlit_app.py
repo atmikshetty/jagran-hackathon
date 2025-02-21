@@ -318,7 +318,7 @@ if st.session_state.show_dashboard:
 
     # generate summary
     summary = generate_summary(captions_text)
-    st.write(summary)
+    st.markdown(f"##### {summary}")
 
     # Recent Images, Only 3
     st.subheader(f"{influencer_name}'s Recent Posts")
