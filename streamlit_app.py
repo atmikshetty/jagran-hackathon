@@ -294,10 +294,11 @@ else:
     total_posts = len(df_filtered)
     most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
 
+    st.write(f"### 📌 {influencer_name} - Summary")
+    
     # 4x4 Grid
     col1, col2, col3, col4 = st.columns(4)
 
-    st.write(f"### 📌 {influencer_name} - Summary")
     with col1:
         st.metric("Total Posts", total_posts)
 
