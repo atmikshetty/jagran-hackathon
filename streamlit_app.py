@@ -280,6 +280,18 @@ analyzer = SentimentIntensityAnalyzer()
 df = load_data()
 df = compute_sentiment_and_promotion(df)
 
+st.markdown(
+    """
+    <div style="display: flex; justify-content: center;">
+        <button onclick="window.location.href='/'" style="background-color: #4CAF50; color: white; padding: 10px 20px; 
+        border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+            Explore Dashboard
+        </button>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Add the Explore Dashboard button
 if st.button("Explore Dashboard", type="primary"):
     st.session_state.show_dashboard = True
