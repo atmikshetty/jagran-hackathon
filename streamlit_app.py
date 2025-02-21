@@ -85,7 +85,7 @@ st.markdown(
 st.markdown(
     """
     ## Why InfluenceCheck?
-    - #### Track Sponsored Content: *Identify the percentage of posts that are promotional.*
+    - #### *Track Sponsored Content*: *Identify the percentage of posts that are promotional.*
     - #### Verify Product Claims: *Check if influencers promote genuine products or misinformation.*
     - #### Sentiment Analysis: *Understand audience reactions to influencer recommendations.*
     - #### Impact on Audience: *Explore how influencers shape consumer behavior and opinions.*
