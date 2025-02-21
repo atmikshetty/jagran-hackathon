@@ -318,7 +318,7 @@ if st.session_state.show_dashboard:
 
     # generate summary
     summary = generate_summary(captions_text)
-    st.write(f"##### {summary}")
+    st.write(f"#### {summary}")
 
     # Recent Images, Only 3
     st.subheader(f"{influencer_name}'s Recent Posts")
@@ -332,7 +332,7 @@ if st.session_state.show_dashboard:
                 with col:
                     st.image(image, caption=f"Post {idx + 1}", use_container_width=True)
         else:
-            st.warning(f"No images found for {influencer_name}")
+            st.warning(f" #### No images found for {influencer_name}")
 
     if df_filtered.empty:
         st.warning("No data available for the selected influencer.")
@@ -343,7 +343,7 @@ if st.session_state.show_dashboard:
         non_sponsored_count = total_posts - sponsored_count
         sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
 
-        st.write(f"### {influencer_name} - Profile Summary")
+        st.write(f"#### {influencer_name} - Profile Summary")
 
         # sizes
         st.markdown(
@@ -414,12 +414,12 @@ if st.session_state.show_dashboard:
                     range=[0, max(values) + 1],
                     gridcolor=PLOT_GRIDCOLOR,
                     linecolor=COLOR_SCHEME['text'],
-                    tickfont={'color': "white"}  # Ensure tick labels are white
+                    tickfont={'color': "white", 'size': 16}  # Ensure tick labels are white
                 ),
                 angularaxis=dict(
                     linecolor=COLOR_SCHEME['text'],
                     gridcolor=PLOT_GRIDCOLOR,
-                    tickfont={'color': "white"}  # Ensure category labels are white
+                    tickfont={'color': "white", 'size':18}  # Ensure category labels are white
                 ),
                 bgcolor=PLOT_BGCOLOR
             ),
