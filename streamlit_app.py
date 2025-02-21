@@ -407,6 +407,8 @@ else:
     
     fig_corr.update_layout(
         **COMMON_LAYOUT,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
         xaxis=dict(
             side='bottom',
             tickfont=dict(color=COLOR_SCHEME['text']),
@@ -447,6 +449,8 @@ else:
     )
     fig_promo.update_layout(
         **COMMON_LAYOUT,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
         legend=dict(
             bgcolor=COLOR_SCHEME['background'],
             bordercolor=COLOR_SCHEME['text'],
