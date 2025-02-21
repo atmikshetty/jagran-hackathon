@@ -89,13 +89,6 @@ st.markdown(
     """
 )
 
-# Initialize session state for the dashboard visibility
-if 'show_dashboard' not in st.session_state:
-    st.session_state.show_dashboard = False
-
-# Initialize VADER Sentiment Analyzer
-analyzer = SentimentIntensityAnalyzer()
-
 @st.cache_data
 def load_data():
 
@@ -110,8 +103,6 @@ def load_data():
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
-
-df = load_data()
 
 class TopicMap:
     def __init__(self, df: pd.DataFrame, text_column: str):
@@ -275,230 +266,234 @@ def load_influencer_images(influencer_name):
     
     return images
 
+# Initialize session state for the dashboard visibility
+if 'show_dashboard' not in st.session_state:
+    st.session_state.show_dashboard = False
+
+# Initialize VADER Sentiment Analyzer
+analyzer = SentimentIntensityAnalyzer()
+df = load_data()
 df = compute_sentiment_and_promotion(df)
 
 # Add the Explore Dashboard button
 if st.button("🚀 Explore Dashboard", type="primary", use_container_width=True):
     st.session_state.show_dashboard = True
 
-# Create a container for the dashboard content
-dashboard_container = st.container()
-
-influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
-df_filtered = df[df["influencer_name"] == influencer_name].copy()
-
-
 if st.session_state.show_dashboard:
-    with dashboard_container:
-        # User summary
-        st.subheader(f"✨ {influencer_name}'s Bio")
 
-        # top 10 posts
-        df_captions = (
-            df_filtered[['text']]
-            .dropna()           
-            .drop_duplicates()  
-            .head(10)          
+    influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
+    df_filtered = df[df["influencer_name"] == influencer_name].copy()
+
+    # User summary
+    st.subheader(f"✨ {influencer_name}'s Bio")
+
+    # top 10 posts
+    df_captions = (
+        df_filtered[['text']]
+        .dropna()           
+        .drop_duplicates()  
+        .head(10)          
+    )
+
+    captions_list = df_captions['text'].tolist()
+    captions_text = "\n".join(captions_list)
+
+    # generate summary
+    summary = generate_summary(captions_text)
+    st.write(summary)
+
+    # Recent Images, Only 3
+    st.subheader(f"✨ {influencer_name}'s Recent Posts")
+
+    if influencer_name:
+        # Display images in a horizontal layout
+        images = load_influencer_images(influencer_name)
+        if images:
+            cols = st.columns(3)
+            for idx, (col, image) in enumerate(zip(cols, images)):
+                with col:
+                    st.image(image, caption=f"Post {idx + 1}", use_container_width=True)
+        else:
+            st.warning(f"No images found for {influencer_name}")
+
+    if df_filtered.empty:
+        st.warning("No data available for the selected influencer.")
+    else:
+        total_posts = len(df_filtered)
+        most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
+        sponsored_count = df_filtered["is_sponsored"].sum()
+        non_sponsored_count = total_posts - sponsored_count
+        sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
+
+        st.write(f"### 📌 {influencer_name} - Profile Summary")
+
+        # 4x4 Grid
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric("Total Posts", total_posts)
+
+        with col2:
+            st.metric("Most Liked Post", f"{most_liked_post['like_count']}")
+        
+        with col3:
+            # Fact Checking Details
+            st.metric("Claims Found in Posts", "0%")
+
+        with col4:
+            st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
+
+        # Emotion Analysis - Spider Plot
+        st.subheader("📊 Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post. 🚀")
+        emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
+
+        for caption in df_filtered["caption"].dropna():
+            emotions = detect_emotions(caption)
+            for emotion, count in emotions.items():
+                emotion_counts[emotion] += count
+
+        categories = list(emotion_counts.keys())
+        values = list(emotion_counts.values())
+
+        fig_spider = go.Figure()
+        fig_spider.add_trace(go.Scatterpolar(
+            r=values + [values[0]],
+            theta=categories + [categories[0]],
+            fill='toself',
+            fillcolor=f'rgba{tuple(int(COLOR_SCHEME["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
+            line=dict(color=COLOR_SCHEME["primary"]),
+            name="Emotion Distribution"
+        ))
+
+        # Create a copy of COMMON_LAYOUT to avoid duplicate keyword arguments
+        custom_layout = COMMON_LAYOUT.copy()
+        custom_layout.update({
+            "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+            "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+            "polar": dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, max(values) + 1],
+                    gridcolor=PLOT_GRIDCOLOR,
+                    linecolor=COLOR_SCHEME['text'],
+                    tickfont={'color': "white"}  # Ensure tick labels are white
+                ),
+                angularaxis=dict(
+                    linecolor=COLOR_SCHEME['text'],
+                    gridcolor=PLOT_GRIDCOLOR,
+                    tickfont={'color': "white"}  # Ensure category labels are white
+                ),
+                bgcolor=PLOT_BGCOLOR
+            ),
+            "font": dict(color="white"),  # Set all text labels to white
+            "showlegend": False
+        })
+
+        fig_spider.update_layout(**custom_layout)
+        st.plotly_chart(fig_spider, use_container_width=True)
+
+
+    # Sentiment Analysis Pie Chart
+        st.subheader("📊 Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content. 😊😡😐")
+        sentiment_counts = df_filtered["caption_sentiment"].value_counts()
+
+        fig_sentiment_pie = px.pie(
+            names=sentiment_counts.index,
+            values=sentiment_counts.values,
+            title="Sentiment Distribution",
+            color_discrete_sequence=[
+                COLOR_SCHEME["primary"], 
+                COLOR_SCHEME["secondary"], 
+                COLOR_SCHEME["accent"]
+            ]
         )
 
-        captions_list = df_captions['text'].tolist()
-        captions_text = "\n".join(captions_list)
+        fig_sentiment_pie.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
+            insidetextfont=dict(color=COLOR_SCHEME['text_light'])
+        )
 
-        # generate summary
-        summary = generate_summary(captions_text)
-        st.write(summary)
+        # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
+        custom_layout = COMMON_LAYOUT.copy()
+        custom_layout.update({
+            "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+            "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+            "legend": dict(
+                bgcolor=COLOR_SCHEME['background'],
+                bordercolor=COLOR_SCHEME['text'],
+                borderwidth=1,
+                font=dict(color=COLOR_SCHEME['text'])
+            )
+        })
 
-        # Recent Images, Only 3
-        st.subheader(f"✨ {influencer_name}'s Recent Posts")
+        fig_sentiment_pie.update_layout(**custom_layout)
+        st.plotly_chart(fig_sentiment_pie, use_container_width=True)
+
+        # Correlation Heatmap
+        st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends. 🔥📈")
+        numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
+        df_corr = df_filtered[numeric_cols].corr()
+
+        # Drop all-NaN rows/columns
+        df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
+
+        # Extract correlation values and labels
+        corr_values = df_corr.to_numpy()
+        x_labels = list(df_corr.columns)
+        y_labels = list(df_corr.index)
+
+        fig_corr = ff.create_annotated_heatmap(
+            z=corr_values,
+            x=x_labels,
+            y=y_labels,
+            annotation_text=np.round(corr_values, 2),
+            colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
+            showscale=True,
+            font_colors=['white', 'white']
+        )
+
+        # Force background transparency for heatmap
+        fig_corr.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
+            plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
+            xaxis=dict(
+                showgrid=False,
+                zeroline=False,
+                tickfont=dict(color="white"),
+                title_font=dict(color="white")
+            ),
+            yaxis=dict(
+                showgrid=False,
+                zeroline=False,
+                tickfont=dict(color="white"),
+                title_font=dict(color="white")
+            ),
+            coloraxis_colorbar=dict(
+                tickfont=dict(color="white"),
+                title_font=dict(color="white")
+            )
+        )
+
+        # Update each annotation to ensure they blend well
+        for annotation in fig_corr.layout.annotations:
+            annotation.font.color = "white"
+
+        st.plotly_chart(fig_corr, use_container_width=True)
+
+        # Top 10 Topics 
+        st.subheader("🎯 Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest. 🔥💬")
+        
+        topic_analyzer = TopicMap(df, text_column="caption")
 
         if influencer_name:
-            # Display images in a horizontal layout
-            images = load_influencer_images(influencer_name)
-            if images:
-                cols = st.columns(3)
-                for idx, (col, image) in enumerate(zip(cols, images)):
-                    with col:
-                        st.image(image, caption=f"Post {idx + 1}", use_container_width=True)
+            topics = topic_analyzer.get_topics_for_influencer(influencer_name)
+            
+            if topics:
+                st.write("Most discussed topics by this influencer:")
+                for i, topic in enumerate(topics[:10], 1):
+                    st.write(f"{i}. **{topic}**")
             else:
-                st.warning(f"No images found for {influencer_name}")
-
-        if df_filtered.empty:
-            st.warning("No data available for the selected influencer.")
-        else:
-            total_posts = len(df_filtered)
-            most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
-            sponsored_count = df_filtered["is_sponsored"].sum()
-            non_sponsored_count = total_posts - sponsored_count
-            sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
-
-            st.write(f"### 📌 {influencer_name} - Profile Summary")
-
-            # 4x4 Grid
-            col1, col2, col3, col4 = st.columns(4)
-
-            with col1:
-                st.metric("Total Posts", total_posts)
-
-            with col2:
-                st.metric("Most Liked Post", f"{most_liked_post['like_count']}")
-            
-            with col3:
-                # Fact Checking Details
-                st.metric("Claims Found in Posts", "0%")
-
-            with col4:
-                st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
-
-            # Emotion Analysis - Spider Plot
-            st.subheader("📊 Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post. 🚀")
-            emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
-
-            for caption in df_filtered["caption"].dropna():
-                emotions = detect_emotions(caption)
-                for emotion, count in emotions.items():
-                    emotion_counts[emotion] += count
-
-            categories = list(emotion_counts.keys())
-            values = list(emotion_counts.values())
-
-            fig_spider = go.Figure()
-            fig_spider.add_trace(go.Scatterpolar(
-                r=values + [values[0]],
-                theta=categories + [categories[0]],
-                fill='toself',
-                fillcolor=f'rgba{tuple(int(COLOR_SCHEME["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
-                line=dict(color=COLOR_SCHEME["primary"]),
-                name="Emotion Distribution"
-            ))
-
-            # Create a copy of COMMON_LAYOUT to avoid duplicate keyword arguments
-            custom_layout = COMMON_LAYOUT.copy()
-            custom_layout.update({
-                "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-                "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-                "polar": dict(
-                    radialaxis=dict(
-                        visible=True,
-                        range=[0, max(values) + 1],
-                        gridcolor=PLOT_GRIDCOLOR,
-                        linecolor=COLOR_SCHEME['text'],
-                        tickfont={'color': "white"}  # Ensure tick labels are white
-                    ),
-                    angularaxis=dict(
-                        linecolor=COLOR_SCHEME['text'],
-                        gridcolor=PLOT_GRIDCOLOR,
-                        tickfont={'color': "white"}  # Ensure category labels are white
-                    ),
-                    bgcolor=PLOT_BGCOLOR
-                ),
-                "font": dict(color="white"),  # Set all text labels to white
-                "showlegend": False
-            })
-
-            fig_spider.update_layout(**custom_layout)
-            st.plotly_chart(fig_spider, use_container_width=True)
-
-
-        # Sentiment Analysis Pie Chart
-            st.subheader("📊 Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content. 😊😡😐")
-            sentiment_counts = df_filtered["caption_sentiment"].value_counts()
-
-            fig_sentiment_pie = px.pie(
-                names=sentiment_counts.index,
-                values=sentiment_counts.values,
-                title="Sentiment Distribution",
-                color_discrete_sequence=[
-                    COLOR_SCHEME["primary"], 
-                    COLOR_SCHEME["secondary"], 
-                    COLOR_SCHEME["accent"]
-                ]
-            )
-
-            fig_sentiment_pie.update_traces(
-                textposition='inside',
-                textinfo='percent+label',
-                textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
-                insidetextfont=dict(color=COLOR_SCHEME['text_light'])
-            )
-
-            # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
-            custom_layout = COMMON_LAYOUT.copy()
-            custom_layout.update({
-                "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-                "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-                "legend": dict(
-                    bgcolor=COLOR_SCHEME['background'],
-                    bordercolor=COLOR_SCHEME['text'],
-                    borderwidth=1,
-                    font=dict(color=COLOR_SCHEME['text'])
-                )
-            })
-
-            fig_sentiment_pie.update_layout(**custom_layout)
-            st.plotly_chart(fig_sentiment_pie, use_container_width=True)
-
-            # Correlation Heatmap
-            st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends. 🔥📈")
-            numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
-            df_corr = df_filtered[numeric_cols].corr()
-
-            # Drop all-NaN rows/columns
-            df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
-
-            # Extract correlation values and labels
-            corr_values = df_corr.to_numpy()
-            x_labels = list(df_corr.columns)
-            y_labels = list(df_corr.index)
-
-            fig_corr = ff.create_annotated_heatmap(
-                z=corr_values,
-                x=x_labels,
-                y=y_labels,
-                annotation_text=np.round(corr_values, 2),
-                colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
-                showscale=True,
-                font_colors=['white', 'white']
-            )
-
-            # Force background transparency for heatmap
-            fig_corr.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
-                plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
-                xaxis=dict(
-                    showgrid=False,
-                    zeroline=False,
-                    tickfont=dict(color="white"),
-                    title_font=dict(color="white")
-                ),
-                yaxis=dict(
-                    showgrid=False,
-                    zeroline=False,
-                    tickfont=dict(color="white"),
-                    title_font=dict(color="white")
-                ),
-                coloraxis_colorbar=dict(
-                    tickfont=dict(color="white"),
-                    title_font=dict(color="white")
-                )
-            )
-
-            # Update each annotation to ensure they blend well
-            for annotation in fig_corr.layout.annotations:
-                annotation.font.color = "white"
-
-            st.plotly_chart(fig_corr, use_container_width=True)
-
-            # Top 10 Topics 
-            st.subheader("🎯 Top 10 Topics – The most discussed themes by this influencer, showcasing key areas of audience interest. 🔥💬")
-            
-            topic_analyzer = TopicMap(df, text_column="caption")
-
-            if influencer_name:
-                topics = topic_analyzer.get_topics_for_influencer(influencer_name)
-                
-                if topics:
-                    st.write("Most discussed topics by this influencer:")
-                    for i, topic in enumerate(topics[:10], 1):
-                        st.write(f"{i}. **{topic}**")
-                else:
-                    st.write("No topics could be analyzed for this influencer.")
+                st.write("No topics could be analyzed for this influencer.")
+    
