@@ -450,36 +450,47 @@ else:
 
     # Sponsored Posts Analysis
     st.subheader("📢 Sponsored Posts Analysis")
+
+    # Rename True/False to human-readable labels
     promo_counts = df_filtered["is_sponsored"].value_counts().rename(
         index={False: "Non-Sponsored", True: "Sponsored"}
     )
 
+    # Create Pie Chart
     fig_promo = px.pie(
-        promo_counts,
         names=promo_counts.index,
         values=promo_counts.values,
         title="Sponsored vs Non-Sponsored Posts",
         color_discrete_sequence=[COLOR_SCHEME["primary"], COLOR_SCHEME["secondary"]]
     )
 
+    # Update Pie Chart Traces
     fig_promo.update_traces(
         textposition='inside',
         textinfo='percent+label',
         textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
         insidetextfont=dict(color=COLOR_SCHEME['text_light'])
     )
-    fig_promo.update_layout(
-        **COMMON_LAYOUT,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        legend=dict(
+
+    # Copy COMMON_LAYOUT to avoid multiple argument conflicts
+    custom_layout = COMMON_LAYOUT.copy()
+    custom_layout.update({
+        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        "legend": dict(
             bgcolor=COLOR_SCHEME['background'],
             bordercolor=COLOR_SCHEME['text'],
             borderwidth=1,
             font=dict(color=COLOR_SCHEME['text'])
         )
-    )
+    })
+
+    # Apply the layout updates
+    fig_promo.update_layout(**custom_layout)
+
+    # Render in Streamlit
     st.plotly_chart(fig_promo, use_container_width=True)
+
 
     # Top 10 Topics 
     st.subheader("🎯 Top 10 Topics")
