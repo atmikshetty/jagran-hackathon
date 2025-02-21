@@ -423,7 +423,7 @@ else:
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
     # Correlation Heatmap
-    st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes, comments, and sentiment scores to understand audience interaction trends. 🔥📈")
+    st.subheader("📊 Engagement Correlation Heatmap – Reveals the relationship between likes and comments to understand audience interaction trends. 🔥📈")
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
     df_corr = df_filtered[numeric_cols].corr()
 
