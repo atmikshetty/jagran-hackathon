@@ -628,8 +628,8 @@ if st.session_state.show_dashboard:
         # fig_spider.update_layout(**custom_layout)
         # st.plotly_chart(fig_spider, use_container_width=True)
 
-        st.subheader("What emotions drive audience interaction with influencer content?")
-        emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
+        # st.subheader("What emotions drive audience interaction with influencer content?")
+        # emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
         
         for caption in df_filtered["caption"].dropna():
             emotions = detect_emotions(caption)
@@ -679,8 +679,8 @@ if st.session_state.show_dashboard:
         # st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
          # For the sentiment pie chart
-        st.subheader("Audience Sentiment Analysis: A Breakdown of Reactions to Influencer Content")
-        sentiment_counts = df_filtered["caption_sentiment"].value_counts()
+        # st.subheader("Audience Sentiment Analysis: A Breakdown of Reactions to Influencer Content")
+        # sentiment_counts = df_filtered["caption_sentiment"].value_counts()
         fig_sentiment_pie = create_sentiment_pie(sentiment_counts)
         st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
@@ -739,7 +739,12 @@ if st.session_state.show_dashboard:
 
         # st.plotly_chart(fig_corr, use_container_width=True)
 
-        fig_corr = create_correlation_heatmap(df_corr, theme_colors)
+        # For the correlation heatmap
+        # st.subheader("Understanding Influencer Impact via Audience Reactions and Engagement Correlations")
+        # numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
+        # df_corr = df_filtered[numeric_cols].corr()
+        # df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
+        fig_corr = create_correlation_heatmap(df_corr)
         st.plotly_chart(fig_corr, use_container_width=True)
 
         # Top 10 Topics 
