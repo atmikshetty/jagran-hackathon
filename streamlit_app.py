@@ -428,19 +428,22 @@ def create_spider_plot(emotion_counts):
                 range=[0, max(values) + 1],
                 gridcolor=theme_colors['grid'],
                 linecolor=theme_colors['text'],
-                tickfont={'color': theme_colors['text'], 'size': 16}
+                tickfont={'color': theme_colors['text'], 'size': 16},
+                title=dict(text="Count", font=dict(size=14, color=theme_colors['text']))
             ),
             angularaxis=dict(
                 linecolor=theme_colors['text'],
                 gridcolor=theme_colors['grid'],
-                tickfont={'color': theme_colors['text'], 'size': 18}
+                tickfont={'color': theme_colors['text'], 'size': 18},
+                type='category'
             ),
             bgcolor='rgba(0,0,0,0)'
         ),
         "showlegend": False
     })
-    
+
     fig_spider.update_layout(**layout)
+    
     return fig_spider
 
 def create_sentiment_pie(sentiment_counts):
