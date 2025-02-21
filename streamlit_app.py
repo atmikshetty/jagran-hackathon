@@ -223,7 +223,7 @@ st.write(f"##### Track Sponsored Content: Identify the percentage of posts that 
 st.write(f"##### Verify Product Claims: Check if influencers promote genuine products or misinformation.")
 st.write(f"##### Sentiment Analysis: Understand audience reactions to influencer recommendations.")
 st.write(f"##### Impact on Audience: Explore how influencers shape consumer behavior and opinions.")
-st.write(f"##### InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.")
+st.write(f"#### InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.")
 
 @st.cache_data
 def load_data():
