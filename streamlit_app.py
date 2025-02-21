@@ -74,25 +74,16 @@ st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layou
 # Title and Introduction
 st.title("Welcome to InfluenceCheck")
 
-st.markdown(
-    """
-    #### A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries.
-    #### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.
-    """
-)
+st.write(f"#####  A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries. ")
+st.write(f"##### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
 
-# Mission Statement
-st.markdown(
-    """
-    ## Why InfluenceChek?
-    - #### Track Sponsored Content: Identify the percentage of posts that are promotional.
-    - #### Verify Product Claims: Check if influencers promote genuine products or misinformation.
-    - #### Sentiment Analysis: Understand audience reactions to influencer recommendations.
-    - #### Impact on Audience: Explore how influencers shape consumer behavior and opinions.
-    
-    ## InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.
-    """
-)
+st.write(f"## Why InfluenceChek?")
+st.write(f"#### Track Sponsored Content: Identify the percentage of posts that are promotional.")
+st.write(f"#### Verify Product Claims: Check if influencers promote genuine products or misinformation.")
+st.write(f"#### Sentiment Analysis: Understand audience reactions to influencer recommendations.")
+st.write(f"#### Impact on Audience: Explore how influencers shape consumer behavior and opinions.")
+
+st.write(f"## InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.")
 
 @st.cache_data
 def load_data():
@@ -343,7 +334,7 @@ if st.session_state.show_dashboard:
         non_sponsored_count = total_posts - sponsored_count
         sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
 
-        st.write(f"#### {influencer_name} - Profile Summary")
+        st.subheader(f" {influencer_name} - Profile Summary")
 
         # sizes
         st.markdown(
