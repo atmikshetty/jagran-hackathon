@@ -405,7 +405,11 @@ else:
     st.subheader("📊 Correlation Heatmap")
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
     df_corr = df_filtered[numeric_cols].corr()
+
+    # Drop all-NaN rows/columns
     df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
+
+    # Extract correlation values and labels
     corr_values = df_corr.to_numpy()
     x_labels = list(df_corr.columns)
     y_labels = list(df_corr.index)
@@ -419,28 +423,30 @@ else:
         showscale=True,
         font_colors=['white', 'black']  # Automatically choose contrasting text colors
     )
-    
-    fig_corr.update_layout(
-        **COMMON_LAYOUT,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
+
+    # Create a copy of COMMON_LAYOUT to update without conflict
+    custom_layout = COMMON_LAYOUT.copy()
+    custom_layout.update({
+        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        "xaxis": dict(
             side='bottom',
             tickfont=dict(color=COLOR_SCHEME['text']),
             gridcolor=PLOT_GRIDCOLOR
         ),
-        yaxis=dict(
+        "yaxis": dict(
             tickfont=dict(color=COLOR_SCHEME['text']),
             gridcolor=PLOT_GRIDCOLOR
         ),
-        coloraxis_colorbar=dict(
+        "coloraxis_colorbar": dict(
             tickfont=dict(color=COLOR_SCHEME['text']),
-            title=dict(
-                font=dict(color=COLOR_SCHEME['text'])  # Correct way to set colorbar title font color
-            )
+            title=dict(text="Correlation", font=dict(color=COLOR_SCHEME['text']))  # Ensure title is correctly formatted
         )
-    )
+    })
+
+    fig_corr.update_layout(**custom_layout)
     st.plotly_chart(fig_corr, use_container_width=True)
+
 
     # Sponsored Posts Analysis
     st.subheader("📢 Sponsored Posts Analysis")
