@@ -273,10 +273,6 @@ def load_influencer_images(influencer_name):
 
 df = compute_sentiment_and_promotion(df)
 
-# Streamlit UI
-st.title("📢 InfluenceCheck - Misinformation Detection & Fact-Checking Dashboard")
-st.header("📊 Influencer Analysis")
-
 influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
 df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
@@ -335,7 +331,7 @@ else:
 
 
     # Emotion Analysis - Spider Plot
-    st.subheader("📊 Emotion Analysis (Spider Plot)")
+    st.subheader("📊 Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post. 🚀")
     emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
 
     for caption in df_filtered["caption"].dropna():
@@ -381,7 +377,6 @@ else:
 
     fig_spider.update_layout(**custom_layout)
     st.plotly_chart(fig_spider, use_container_width=True)
-
 
    # Sentiment Analysis Pie Chart
     st.subheader("📊 Sentiment Distribution")
