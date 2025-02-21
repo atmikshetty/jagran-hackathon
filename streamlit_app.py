@@ -449,8 +449,8 @@ if st.session_state.show_dashboard:
         fig_sentiment_pie.update_traces(
             textposition='inside',
             textinfo='percent+label',
-            textfont=dict(color=COLOR_SCHEME['text_light'], size=14),
-            insidetextfont=dict(color=COLOR_SCHEME['text_light'])
+            textfont=dict(color=COLOR_SCHEME['text_light'], size=18),
+            insidetextfont=dict(color=COLOR_SCHEME['text_light'], size=20)
         )
 
         # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
@@ -499,8 +499,9 @@ if st.session_state.show_dashboard:
             xaxis=dict(
                 showgrid=False,
                 zeroline=False,
-                tickfont=dict(color="white"),
-                title_font=dict(color="white")
+                tickfont=dict(color="white", size=16),
+                title_font=dict(color="white"),
+                side= "bottom"
             ),
             yaxis=dict(
                 showgrid=False,
@@ -517,6 +518,7 @@ if st.session_state.show_dashboard:
         # Update each annotation to ensure they blend well
         for annotation in fig_corr.layout.annotations:
             annotation.font.color = "white"
+            annotation.font.size = 16
 
         st.plotly_chart(fig_corr, use_container_width=True)
 
