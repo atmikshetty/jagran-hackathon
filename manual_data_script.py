@@ -15,7 +15,7 @@ def login():
         cl.load_settings(SESSION_FILE)
     else:
         print("Logging in...")
-        cl.login("chadonly1234", "insta@1234")
+        cl.login("", "")
         cl.dump_settings(SESSION_FILE)
     
     return cl
