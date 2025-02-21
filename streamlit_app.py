@@ -421,33 +421,37 @@ else:
         annotation_text=np.round(corr_values, 2),
         colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
         showscale=True,
-        font_colors=['white', 'white']  # Automatically choose contrasting text colors
+        font_colors=['white', 'white']
     )
 
-    # Create a copy of COMMON_LAYOUT to update without conflict
-    custom_layout = COMMON_LAYOUT.copy()
-
+    # Force background transparency for heatmap
     fig_corr.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot area
-        paper_bgcolor='rgba(0,0,0,0)',  # Transparent figure background
+        paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
+        plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
         xaxis=dict(
-            tickfont=dict(color="white"),  # X-axis labels in white
-            title_font=dict(color="white"),  # X-axis title in white
-            gridcolor='rgba(255,255,255,0.2)'  # Light grid for better visibility
+            showgrid=False,
+            zeroline=False,
+            tickfont=dict(color="white"),
+            title_font=dict(color="white")
         ),
         yaxis=dict(
-            tickfont=dict(color="white"),  # Y-axis labels in white
-            title_font=dict(color="white"),  # Y-axis title in white
-            gridcolor='rgba(255,255,255,0.2)'  # Light grid for better visibility
+            showgrid=False,
+            zeroline=False,
+            tickfont=dict(color="white"),
+            title_font=dict(color="white")
         ),
         coloraxis_colorbar=dict(
-            tickfont=dict(color="white"),  # Color bar tick labels in white
-            title_font=dict(color="white")  # Color bar title in white
+            tickfont=dict(color="white"),
+            title_font=dict(color="white")
         )
     )
 
-    fig_corr.update_layout(**custom_layout)
+    # Update each annotation to ensure they blend well
+    for annotation in fig_corr.layout.annotations:
+        annotation.font.color = "white"
+
     st.plotly_chart(fig_corr, use_container_width=True)
+
 
     # Sponsored Posts Analysis
     st.subheader("📢 Sponsored Posts Analysis")
