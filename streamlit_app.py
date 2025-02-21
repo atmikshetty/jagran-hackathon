@@ -628,8 +628,15 @@ if st.session_state.show_dashboard:
         # fig_spider.update_layout(**custom_layout)
         # st.plotly_chart(fig_spider, use_container_width=True)
 
-        theme_colors = get_current_colors()
-        fig_spider = create_spider_plot(emotion_counts, theme_colors)
+        st.subheader("What emotions drive audience interaction with influencer content?")
+        emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
+        
+        for caption in df_filtered["caption"].dropna():
+            emotions = detect_emotions(caption)
+            for emotion, count in emotions.items():
+                emotion_counts[emotion] += count
+        
+        fig_spider = create_spider_plot(emotion_counts)
         st.plotly_chart(fig_spider, use_container_width=True)
 
 
