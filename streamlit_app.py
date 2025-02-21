@@ -73,13 +73,17 @@ st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layou
 
 # Title and Introduction
 st.title("Welcome to InfluenceCheck")
-st.subheader("A platform designed to analyze and verify influencer content in the **beauty, fitness, and lifestyle** industries.")
-st.write("We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
+st.markdown(
+    """
+    #### A platform designed to analyze and verify influencer content in the **beauty, fitness, and lifestyle** industries.
+    #### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.
+    """
+)
 
 # Mission Statement
 st.markdown(
     """
-    ### Why InfluenceCheck?
+    ## Why InfluenceCheck?
     - #### **Track Sponsored Content**: Identify the percentage of posts that are promotional.
     - #### **Verify Product Claims**: Check if influencers promote genuine products or misinformation.
     - #### **Sentiment Analysis**: Understand audience reactions to influencer recommendations.
