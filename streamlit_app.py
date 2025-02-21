@@ -70,18 +70,6 @@ analyzer = SentimentIntensityAnalyzer()
 
 @st.cache_data
 def load_data():
-    # # old
-    # df_main = pd.read_csv("datasets/influencer_data_final.csv")
-    # df_comments = pd.read_csv("datasets/10_influencers_comments_data.csv")
-
-    # if "id" not in df_main.columns or "post_id" not in df_comments.columns:
-    #     st.error("🚨 Error: Missing necessary columns in datasets!")
-    #     return df_main  
-
-    # df_comments.rename(columns={"text": "comment_text"}, inplace=True)
-    # df_merged = df_main.merge(df_comments, left_on="id", right_on="post_id", how="left")
-
-    # return df_merged
 
     file_id = "1s2mwzkFjQai5Lc27r45ecjHVNOtTwCDl"
     url = f"https://drive.google.com/uc?id={file_id}"
@@ -384,23 +372,6 @@ else:
     )
     st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
-    # Word Cloud
-    st.subheader("🌍 Theme Analysis")
-    text = " ".join(df_filtered["caption"].dropna())
-    if text.strip():
-        wordcloud = WordCloud(
-            width=PLOT_WIDTH,
-            height=PLOT_HEIGHT,
-            background_color=PLOT_BGCOLOR,
-            colormap='viridis',  # Using a consistent colormap
-            min_font_size=10,
-            max_font_size=50
-        ).generate(text)
-        st.image(wordcloud.to_array(), use_container_width=True)
-    else:
-        st.write("No text available for word cloud.")
-
-    # Correlation Heatmap
     # Correlation Heatmap
     st.subheader("📊 Correlation Heatmap")
     numeric_cols = ["like_count", "comments_count", "comments_score", "fact_check_rating_comments"]
