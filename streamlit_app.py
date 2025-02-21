@@ -599,49 +599,52 @@ if st.session_state.show_dashboard:
     if df_filtered.empty:
         st.warning("No data available for the selected influencer.")
     else:
+       
         total_posts = len(df_filtered)
-        most_liked_post = df_filtered.loc[df_filtered["like_count"].idxmax()]
+        most_liked_post = df_filtered["like_count"].max()
         sponsored_count = df_filtered["is_sponsored"].sum()
-        non_sponsored_count = total_posts - sponsored_count
         sponsored_percentage = (sponsored_count / total_posts) * 100 if total_posts > 0 else 0
+    
+        st.subheader(f"{influencer_name} - Profile Summary")
+        display_metrics(total_posts, most_liked_post, sponsored_percentage)
 
-        st.subheader(f" {influencer_name} - Profile Summary")
+        # st.subheader(f" {influencer_name} - Profile Summary")
 
-        # sizes
-        st.markdown(
-            """
-            <style>
-            div[data-testid="metric-container"] {
-                font-size: 40px !important; /* Increases text size */
-            }
-            div[data-testid="stMetricLabel"] {
-                font-size: 20px !important; /* Increases label size */
-                font-weight: bold;
-            }
-            div[data-testid="stMetricValue"] {
-                font-size: 28px !important; /* Increases value size */
-                color: #FFFFFF; /* Optional: Change value color */
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+        # # sizes
+        # st.markdown(
+        #     """
+        #     <style>
+        #     div[data-testid="metric-container"] {
+        #         font-size: 40px !important; /* Increases text size */
+        #     }
+        #     div[data-testid="stMetricLabel"] {
+        #         font-size: 20px !important; /* Increases label size */
+        #         font-weight: bold;
+        #     }
+        #     div[data-testid="stMetricValue"] {
+        #         font-size: 28px !important; /* Increases value size */
+        #         color: #FFFFFF; /* Optional: Change value color */
+        #     }
+        #     </style>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
-        # 4x4 Grid
-        col1, col2, col3, col4 = st.columns(4)
+        # # 4x4 Grid
+        # col1, col2, col3, col4 = st.columns(4)
 
-        with col1:
-            st.metric("Total Posts", total_posts)
+        # with col1:
+        #     st.metric("Total Posts", total_posts)
 
-        with col2:
-            st.metric("Most Liked Post", f"{most_liked_post['like_count']}")
+        # with col2:
+        #     st.metric("Most Liked Post", f"{most_liked_post['like_count']}")
         
-        with col3:
-            # Fact Checking Details
-            st.metric("Claims Found in Posts", "0%")
+        # with col3:
+        #     # Fact Checking Details
+        #     st.metric("Claims Found in Posts", "0%")
 
-        with col4:
-            st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
+        # with col4:
+        #     st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
         # Emotion Analysis - Spider Plot
         st.subheader("What emotions drive audience interaction with influencer content?")
