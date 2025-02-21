@@ -426,23 +426,35 @@ else:
 
     # Create a copy of COMMON_LAYOUT to update without conflict
     custom_layout = COMMON_LAYOUT.copy()
-    custom_layout.update({
-        "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-        "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-        "xaxis": dict(
+    fig_corr.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent figure background
+        xaxis=dict(
             side='bottom',
-            tickfont=dict(color=COLOR_SCHEME['text']),
+            tickfont=dict(color="white"),  # Ensure x-axis labels are white
+            title=dict(text="X Axis", font=dict(color="white")),  # X-axis title color
             gridcolor=PLOT_GRIDCOLOR
         ),
-        "yaxis": dict(
-            tickfont=dict(color=COLOR_SCHEME['text']),
+        yaxis=dict(
+            tickfont=dict(color="white"),  # Ensure y-axis labels are white
+            title=dict(text="Y Axis", font=dict(color="white")),  # Y-axis title color
             gridcolor=PLOT_GRIDCOLOR
         ),
-        "coloraxis_colorbar": dict(
-            tickfont=dict(color=COLOR_SCHEME['text']),
-            title=dict(text="Correlation", font=dict(color=COLOR_SCHEME['text']))  # Ensure title is correctly formatted
+        coloraxis_colorbar=dict(
+            tickfont=dict(color="white"),  # Ensure color bar tick labels are white
+            title=dict(text="Correlation", font=dict(color="white"))  # Ensure color bar title is white
         )
-    })
+    )
+
+    # Explicitly update x and y axis label colors (sometimes necessary)
+    fig_corr.update_xaxes(
+        tickfont=dict(color="white"),
+        title_font=dict(color="white")
+    )
+    fig_corr.update_yaxes(
+        tickfont=dict(color="white"),
+        title_font=dict(color="white")
+    )
 
     fig_corr.update_layout(**custom_layout)
     st.plotly_chart(fig_corr, use_container_width=True)
