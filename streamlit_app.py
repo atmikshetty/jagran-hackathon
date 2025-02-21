@@ -31,6 +31,7 @@ genai.configure(api_key=gemini_api_key)
 # configure the openai client
 openai.api_key = openai_api_key
 
+# Define a function to detect the current theme
 def get_theme():
     # Try to get theme from query params first
     query_params = st.experimental_get_query_params()
@@ -57,23 +58,26 @@ def get_theme():
     # Default to light if we can't detect the theme
     return theme if theme in ['light', 'dark'] else 'light'
 
-# Define color schemes for both themes
+# Define the base color scheme
 COLOR_SCHEME = {
+    'primary': '#1f77b4',  # Blue
+    'secondary': '#ff7f0e',  # Orange
+    'accent': '#2ca02c',  # Green
+    'neutral': '#7f7f7f',  # Gray
+    'background': '#ffffff',  # White
+    'text': '#000000',      # Black
+    'text_light': '#ffffff'  # White text for dark backgrounds
+}
+
+# Define theme-specific color overrides
+THEME_COLORS = {
     'light': {
-        'primary': '#1f77b4',  # Blue
-        'secondary': '#ff7f0e',  # Orange
-        'accent': '#2ca02c',  # Green
-        'neutral': '#7f7f7f',  # Gray
         'background': '#ffffff',  # White
         'text': '#000000',      # Black
         'grid': '#e0e0e0',      # Light gray for grid
         'text_contrast': '#000000'  # Black text for contrast
     },
     'dark': {
-        'primary': '#1f77b4',  # Blue
-        'secondary': '#ff7f0e',  # Orange
-        'accent': '#2ca02c',  # Green
-        'neutral': '#7f7f7f',  # Gray
         'background': '#0e1117',  # Dark background
         'text': '#ffffff',      # White
         'grid': '#2b2b2b',      # Dark gray for grid
@@ -81,19 +85,37 @@ COLOR_SCHEME = {
     }
 }
 
-# Function to get current color scheme
 def get_current_colors():
     theme = get_theme()
-    return COLOR_SCHEME[theme]
+    colors = COLOR_SCHEME.copy()
+    colors.update(THEME_COLORS[theme])
+    return colors
 
-# Update the layout settings function
-def get_plot_layout(theme_colors=None):
-    if theme_colors is None:
-        theme_colors = get_current_colors()
+# Define layout parameters using the base color scheme
+PLOT_HEIGHT = 500
+PLOT_WIDTH = 800
+PLOT_BGCOLOR = COLOR_SCHEME['background']
+PLOT_GRIDCOLOR = '#e0e0e0'  # Slightly darker grid for better visibility
+
+# Define common layout settings
+COMMON_LAYOUT = {
+    'height': PLOT_HEIGHT,
+    'width': PLOT_WIDTH,
+    'paper_bgcolor': 'rgba(0,0,0,0)',  # Changed to transparent
+    'plot_bgcolor': 'rgba(0,0,0,0)',   # Changed to transparent
+    'font': {'size': 12, 'color': COLOR_SCHEME['text']},
+    'margin': dict(l=50, r=50, t=50, b=50)
+}
+
+# Function to get theme-aware plot layout
+def get_plot_layout(override_colors=None):
+    theme_colors = get_current_colors()
+    if override_colors:
+        theme_colors.update(override_colors)
     
     return {
-        'height': 500,
-        'width': 800,
+        'height': PLOT_HEIGHT,
+        'width': PLOT_WIDTH,
         'paper_bgcolor': 'rgba(0,0,0,0)',
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'font': {
@@ -112,22 +134,6 @@ def get_plot_layout(theme_colors=None):
             title_font=dict(color=theme_colors['text'])
         )
     }
-
-# Define consistent layout parameters
-PLOT_HEIGHT = 500
-PLOT_WIDTH = 800
-PLOT_BGCOLOR = COLOR_SCHEME['background']
-PLOT_GRIDCOLOR = '#e0e0e0'  # Slightly darker grid for better visibility
-
-# Define common layout settings
-COMMON_LAYOUT = {
-    'height': PLOT_HEIGHT,
-    'width': PLOT_WIDTH,
-    'paper_bgcolor': PLOT_BGCOLOR,
-    'plot_bgcolor': PLOT_BGCOLOR,
-    'font': {'size': 12, 'color': COLOR_SCHEME['text']},
-    'margin': dict(l=50, r=50, t=50, b=50)
-}
 
 plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
 paper_bgcolor='rgba(0,0,0,0)'  # Transparent figure background
@@ -334,9 +340,8 @@ def load_influencer_images(influencer_name):
     return images
 
 # Update the spider plot
-def create_spider_plot(emotion_counts, theme_colors=None):
-    if theme_colors is None:
-        theme_colors = get_current_colors()
+def create_spider_plot(emotion_counts):
+    theme_colors = get_current_colors()
     
     categories = list(emotion_counts.keys())
     values = list(emotion_counts.values())
@@ -351,7 +356,7 @@ def create_spider_plot(emotion_counts, theme_colors=None):
         name="Emotion Distribution"
     ))
     
-    layout = get_plot_layout(theme_colors)
+    layout = get_plot_layout()
     layout.update({
         "polar": dict(
             radialaxis=dict(
@@ -374,10 +379,8 @@ def create_spider_plot(emotion_counts, theme_colors=None):
     fig_spider.update_layout(**layout)
     return fig_spider
 
-# Update the sentiment pie chart
-def create_sentiment_pie(sentiment_counts, theme_colors=None):
-    if theme_colors is None:
-        theme_colors = get_current_colors()
+def create_sentiment_pie(sentiment_counts):
+    theme_colors = get_current_colors()
     
     fig_sentiment_pie = px.pie(
         names=sentiment_counts.index,
@@ -390,6 +393,7 @@ def create_sentiment_pie(sentiment_counts, theme_colors=None):
         ]
     )
     
+    # Update trace settings
     fig_sentiment_pie.update_traces(
         textposition='inside',
         textinfo='percent+label',
@@ -397,26 +401,31 @@ def create_sentiment_pie(sentiment_counts, theme_colors=None):
         insidetextfont=dict(color=theme_colors['text_contrast'], size=20)
     )
     
-    layout = get_plot_layout(theme_colors)
+    # Get and update layout
+    layout = get_plot_layout()
     layout.update({
+        "showlegend": True,
         "legend": dict(
             font=dict(color=theme_colors['text']),
             bgcolor='rgba(0,0,0,0)'
+        ),
+        "title": dict(
+            font=dict(color=theme_colors['text'], size=20)
         )
     })
     
     fig_sentiment_pie.update_layout(**layout)
     return fig_sentiment_pie
 
-# Update the correlation heatmap
-def create_correlation_heatmap(df_corr, theme_colors=None):
-    if theme_colors is None:
-        theme_colors = get_current_colors()
+def create_correlation_heatmap(df_corr):
+    theme_colors = get_current_colors()
     
+    # Prepare correlation data
     corr_values = df_corr.to_numpy()
     x_labels = list(df_corr.columns)
     y_labels = list(df_corr.index)
     
+    # Create heatmap
     fig_corr = ff.create_annotated_heatmap(
         z=corr_values,
         x=x_labels,
@@ -427,7 +436,8 @@ def create_correlation_heatmap(df_corr, theme_colors=None):
         font_colors=[theme_colors['text_contrast'], theme_colors['text_contrast']]
     )
     
-    layout = get_plot_layout(theme_colors)
+    # Get and update layout
+    layout = get_plot_layout()
     layout.update({
         "width": 500,
         "height": 500,
