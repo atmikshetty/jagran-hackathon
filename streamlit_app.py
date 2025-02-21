@@ -340,7 +340,7 @@ if st.session_state.show_dashboard:
             }
             div[data-testid="stMetricValue"] {
                 font-size: 28px !important; /* Increases value size */
-                color: #ff4b4b; /* Optional: Change value color */
+                color: #FFFFFF; /* Optional: Change value color */
             }
             </style>
             """,
