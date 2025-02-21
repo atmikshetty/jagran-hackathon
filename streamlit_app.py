@@ -335,7 +335,6 @@ else:
     with col4:
         st.metric("Sponsored Posts", f"{sponsored_percentage:.2f}%")
 
-
     # Emotion Analysis - Spider Plot
     st.subheader("📊 Audience Emotional Response – Shows how viewers feel when engaging with an influencer's post. 🚀")
     emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
@@ -369,20 +368,22 @@ else:
                 range=[0, max(values) + 1],
                 gridcolor=PLOT_GRIDCOLOR,
                 linecolor=COLOR_SCHEME['text'],
-                tickfont={'color': COLOR_SCHEME['text']}
+                tickfont={'color': "white"}  # Ensure tick labels are white
             ),
             angularaxis=dict(
                 linecolor=COLOR_SCHEME['text'],
                 gridcolor=PLOT_GRIDCOLOR,
-                tickfont={'color': COLOR_SCHEME['text']}
+                tickfont={'color': "white"}  # Ensure category labels are white
             ),
             bgcolor=PLOT_BGCOLOR
         ),
+        "font": dict(color="white"),  # Set all text labels to white
         "showlegend": False
     })
 
     fig_spider.update_layout(**custom_layout)
     st.plotly_chart(fig_spider, use_container_width=True)
+
 
    # Sentiment Analysis Pie Chart
     st.subheader("📊 Audience Sentiment Breakdown – Visualizes the overall positivity, negativity, and neutrality in responses to influencer content. 😊😡😐")
