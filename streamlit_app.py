@@ -68,6 +68,27 @@ except OSError:
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
     nlp = spacy.load("en_core_web_sm")
 
+# Set page title and layout
+st.set_page_config(page_title="InfluenceCheck - Misinformation Detection", layout="wide")
+
+# Title and Introduction
+st.title("📢 InfluenceCheck - Misinformation Detection & Fact-Checking Dashboard")
+st.write("Welcome to InfluenceCheck, a platform designed to analyze and verify influencer content in the **beauty, fitness, and lifestyle** industries. "
+         "We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
+
+# Mission Statement
+st.markdown(
+    """
+    ### 🚀 Why InfluenceCheck?
+    - **Track Sponsored Content**: Identify the percentage of posts that are promotional.
+    - **Verify Product Claims**: Check if influencers promote genuine products or misinformation.
+    - **Sentiment Analysis**: Understand audience reactions to influencer recommendations.
+    - **Impact on Audience**: Explore how influencers shape consumer behavior and opinions.
+    
+    InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.
+    """
+)
+
 # Initialize VADER Sentiment Analyzer
 analyzer = SentimentIntensityAnalyzer()
 
