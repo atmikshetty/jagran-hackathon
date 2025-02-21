@@ -428,23 +428,23 @@ def create_spider_plot(emotion_counts):
                 range=[0, max(values) + 1],
                 gridcolor=theme_colors['grid'],
                 linecolor=theme_colors['text'],
-                tickfont={'color': theme_colors['text'], 'size': 16},
+                tickfont={'color': theme_colors['text'], 'size': 16},  # Ensuring white labels in dark mode
                 title=dict(text="Count", font=dict(size=14, color=theme_colors['text']))
             ),
             angularaxis=dict(
                 linecolor=theme_colors['text'],
                 gridcolor=theme_colors['grid'],
-                tickfont={'color': theme_colors['text'], 'size': 18},
+                tickfont={'color': theme_colors['text'], 'size': 18},  # Ensuring white labels in dark mode
                 type='category'
             ),
             bgcolor='rgba(0,0,0,0)'
         ),
         "showlegend": False
     })
-
-    fig_spider.update_layout(**layout)
     
+    fig_spider.update_layout(**layout)
     return fig_spider
+
 
 def create_sentiment_pie(sentiment_counts):
     theme_colors = get_current_colors()
@@ -460,7 +460,7 @@ def create_sentiment_pie(sentiment_counts):
         ]
     )
     
-    # Update trace settings
+    # Explicitly setting text colors for dark mode
     fig_sentiment_pie.update_traces(
         textposition='inside',
         textinfo='percent+label',
@@ -473,37 +473,42 @@ def create_sentiment_pie(sentiment_counts):
     layout.update({
         "showlegend": True,
         "legend": dict(
-            font=dict(color=theme_colors['text']),
+            font=dict(color=theme_colors['text']),  # Ensuring legend text is white in dark mode
             bgcolor='rgba(0,0,0,0)'
         ),
         "title": dict(
-            font=dict(color=theme_colors['text'], size=20)
+            font=dict(color=theme_colors['text'], size=20)  # Ensuring title is white in dark mode
         )
     })
     
     fig_sentiment_pie.update_layout(**layout)
+    
+    # Explicitly set the background and remove any template overrides
+    fig_sentiment_pie.layout.template = None
+    fig_sentiment_pie.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+
     return fig_sentiment_pie
+
 
 def create_correlation_heatmap(df_corr):
     theme_colors = get_current_colors()
     
-    # Prepare correlation data
     corr_values = df_corr.to_numpy()
     x_labels = list(df_corr.columns)
     y_labels = list(df_corr.index)
     
-    # Create heatmap
     fig_corr = ff.create_annotated_heatmap(
         z=corr_values,
         x=x_labels,
         y=y_labels,
         annotation_text=np.round(corr_values, 2),
         colorscale=[[0, theme_colors["primary"]], [1, theme_colors["secondary"]]],
-        showscale=True,
-        font_colors=[theme_colors['text_contrast'], theme_colors['text_contrast']]
+        showscale=True
     )
     
-    # Get and update layout
     layout = get_plot_layout()
     layout.update({
         "width": 500,
@@ -511,14 +516,14 @@ def create_correlation_heatmap(df_corr):
         "xaxis": dict(
             showgrid=False,
             zeroline=False,
-            tickfont=dict(color=theme_colors['text'], size=16),
+            tickfont=dict(color=theme_colors['text'], size=16),  # Ensuring white labels in dark mode
             title_font=dict(color=theme_colors['text']),
             side="bottom"
         ),
         "yaxis": dict(
             showgrid=False,
             zeroline=False,
-            tickfont=dict(color=theme_colors['text'], size=16),
+            tickfont=dict(color=theme_colors['text'], size=16),  # Ensuring white labels in dark mode
             title_font=dict(color=theme_colors['text'])
         ),
         "coloraxis_colorbar": dict(
@@ -528,13 +533,21 @@ def create_correlation_heatmap(df_corr):
     })
     
     fig_corr.update_layout(**layout)
-    
-    # Update annotations
+
+    # Force annotation text to be white in dark mode
     for annotation in fig_corr.layout.annotations:
         annotation.font.color = theme_colors['text_contrast']
         annotation.font.size = 16
-    
+
+    # Explicitly set the background and remove any template overrides
+    fig_corr.layout.template = None
+    fig_corr.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+
     return fig_corr
+
 
 # Initialize session state for the dashboard visibility
 if 'show_dashboard' not in st.session_state:
