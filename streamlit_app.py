@@ -218,12 +218,11 @@ st.title(f" ## Welcome to InfluenceCheck")
 st.write(f"#####  A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries. ")
 st.write(f"##### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.")
 
-st.subheader(f" Why InfluenceCheck?")
+st.subheader(f"Why InfluenceCheck?")
 st.write(f"##### Track Sponsored Content: Identify the percentage of posts that are promotional.")
 st.write(f"##### Verify Product Claims: Check if influencers promote genuine products or misinformation.")
 st.write(f"##### Sentiment Analysis: Understand audience reactions to influencer recommendations.")
 st.write(f"##### Impact on Audience: Explore how influencers shape consumer behavior and opinions.")
-
 st.write(f"##### InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.")
 
 @st.cache_data
