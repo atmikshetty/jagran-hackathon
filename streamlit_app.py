@@ -332,7 +332,7 @@ if st.session_state.show_dashboard:
             """
             <style>
             div[data-testid="metric-container"] {
-                font-size: 24px !important; /* Increases text size */
+                font-size: 40px !important; /* Increases text size */
             }
             div[data-testid="stMetricLabel"] {
                 font-size: 20px !important; /* Increases label size */
