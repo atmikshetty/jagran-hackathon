@@ -76,19 +76,19 @@ st.title("Welcome to InfluenceCheck")
 
 st.markdown(
     """
-    ##### *A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries.*
-    ##### *We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.*
+    #### A platform designed to analyze and verify influencer content in the beauty, fitness, and lifestyle industries.
+    #### We investigate whether the products they promote are genuine, how many of them are flagged as sponsorships, and what their audience thinks of them.
     """
 )
 
 # Mission Statement
 st.markdown(
     """
-    ## Why InfluenceCheck?
-    - ##### *Track Sponsored Content*: *Identify the percentage of posts that are promotional.*
-    - ##### *Verify Product Claims*: *Check if influencers promote genuine products or misinformation.*
-    - ##### *Sentiment Analysis*: *Understand audience reactions to influencer recommendations.*
-    - ##### *Impact on Audience*: *Explore how influencers shape consumer behavior and opinions.*
+    ## Why InfluenceChek?
+    - #### Track Sponsored Content: Identify the percentage of posts that are promotional.
+    - #### Verify Product Claims: Check if influencers promote genuine products or misinformation.
+    - #### Sentiment Analysis: Understand audience reactions to influencer recommendations.
+    - #### Impact on Audience: Explore how influencers shape consumer behavior and opinions.
     
     ## InfluenceCheck aims to provide **transparency** in influencer marketing and its effect on people's **mindset and choices**.
     """
@@ -298,7 +298,8 @@ if st.button("Explore Dashboard", type="primary"):
 
 if st.session_state.show_dashboard:
 
-    influencer_name = st.selectbox("Select an Influencer", get_influencer_names())
+    st.subheader(f"Select an Influencer:")
+    influencer_name = st.selectbox("", get_influencer_names())
     df_filtered = df[df["influencer_name"] == influencer_name].copy()
 
     # User summary
