@@ -573,49 +573,53 @@ if st.session_state.show_dashboard:
         st.subheader("What emotions drive audience interaction with influencer content?")
         emotion_counts = {"Happy": 0, "Sad": 0, "Angry": 0, "Surprise": 0, "Fear": 0, "Disgust": 0}
 
-        for caption in df_filtered["caption"].dropna():
-            emotions = detect_emotions(caption)
-            for emotion, count in emotions.items():
-                emotion_counts[emotion] += count
+        # for caption in df_filtered["caption"].dropna():
+        #     emotions = detect_emotions(caption)
+        #     for emotion, count in emotions.items():
+        #         emotion_counts[emotion] += count
 
-        categories = list(emotion_counts.keys())
-        values = list(emotion_counts.values())
+        # categories = list(emotion_counts.keys())
+        # values = list(emotion_counts.values())
 
-        fig_spider = go.Figure()
-        fig_spider.add_trace(go.Scatterpolar(
-            r=values + [values[0]],
-            theta=categories + [categories[0]],
-            fill='toself',
-            fillcolor=f'rgba{tuple(int(COLOR_SCHEME["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
-            line=dict(color=COLOR_SCHEME["primary"]),
-            name="Emotion Distribution"
-        ))
+        # fig_spider = go.Figure()
+        # fig_spider.add_trace(go.Scatterpolar(
+        #     r=values + [values[0]],
+        #     theta=categories + [categories[0]],
+        #     fill='toself',
+        #     fillcolor=f'rgba{tuple(int(COLOR_SCHEME["primary"][1:][i:i+2], 16) for i in (0, 2, 4)) + (0.6,)}',
+        #     line=dict(color=COLOR_SCHEME["primary"]),
+        #     name="Emotion Distribution"
+        # ))
 
-        # Create a copy of COMMON_LAYOUT to avoid duplicate keyword arguments
-        custom_layout = COMMON_LAYOUT.copy()
-        custom_layout.update({
-            "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-            "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-            "polar": dict(
-                radialaxis=dict(
-                    visible=True,
-                    range=[0, max(values) + 1],
-                    gridcolor=PLOT_GRIDCOLOR,
-                    linecolor=COLOR_SCHEME['text'],
-                    tickfont={'color': "white", 'size': 16}  # Ensure tick labels are white
-                ),
-                angularaxis=dict(
-                    linecolor=COLOR_SCHEME['text'],
-                    gridcolor=PLOT_GRIDCOLOR,
-                    tickfont={'color': "white", 'size':18}  # Ensure category labels are white
-                ),
-                bgcolor=PLOT_BGCOLOR
-            ),
-            "font": dict(color="white"),  # Set all text labels to white
-            "showlegend": False
-        })
+        # # Create a copy of COMMON_LAYOUT to avoid duplicate keyword arguments
+        # custom_layout = COMMON_LAYOUT.copy()
+        # custom_layout.update({
+        #     "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        #     "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        #     "polar": dict(
+        #         radialaxis=dict(
+        #             visible=True,
+        #             range=[0, max(values) + 1],
+        #             gridcolor=PLOT_GRIDCOLOR,
+        #             linecolor=COLOR_SCHEME['text'],
+        #             tickfont={'color': "white", 'size': 16}  # Ensure tick labels are white
+        #         ),
+        #         angularaxis=dict(
+        #             linecolor=COLOR_SCHEME['text'],
+        #             gridcolor=PLOT_GRIDCOLOR,
+        #             tickfont={'color': "white", 'size':18}  # Ensure category labels are white
+        #         ),
+        #         bgcolor=PLOT_BGCOLOR
+        #     ),
+        #     "font": dict(color="white"),  # Set all text labels to white
+        #     "showlegend": False
+        # })
 
-        fig_spider.update_layout(**custom_layout)
+        # fig_spider.update_layout(**custom_layout)
+        # st.plotly_chart(fig_spider, use_container_width=True)
+
+        theme_colors = get_current_colors()
+        fig_spider = create_spider_plot(emotion_counts, theme_colors)
         st.plotly_chart(fig_spider, use_container_width=True)
 
 
@@ -623,38 +627,41 @@ if st.session_state.show_dashboard:
         st.subheader("Audience Sentiment Analysis: A Breakdown of Reactions to Influencer Content")
         sentiment_counts = df_filtered["caption_sentiment"].value_counts()
 
-        fig_sentiment_pie = px.pie(
-            names=sentiment_counts.index,
-            values=sentiment_counts.values,
-            title="Sentiment Distribution",
-            color_discrete_sequence=[
-                COLOR_SCHEME["primary"], 
-                COLOR_SCHEME["secondary"], 
-                COLOR_SCHEME["accent"]
-            ]
-        )
+        # fig_sentiment_pie = px.pie(
+        #     names=sentiment_counts.index,
+        #     values=sentiment_counts.values,
+        #     title="Sentiment Distribution",
+        #     color_discrete_sequence=[
+        #         COLOR_SCHEME["primary"], 
+        #         COLOR_SCHEME["secondary"], 
+        #         COLOR_SCHEME["accent"]
+        #     ]
+        # )
 
-        fig_sentiment_pie.update_traces(
-            textposition='inside',
-            textinfo='percent+label',
-            textfont=dict(color=COLOR_SCHEME['text_light'], size=18),
-            insidetextfont=dict(color=COLOR_SCHEME['text_light'], size=20)
-        )
+        # fig_sentiment_pie.update_traces(
+        #     textposition='inside',
+        #     textinfo='percent+label',
+        #     textfont=dict(color=COLOR_SCHEME['text_light'], size=18),
+        #     insidetextfont=dict(color=COLOR_SCHEME['text_light'], size=20)
+        # )
 
-        # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
-        custom_layout = COMMON_LAYOUT.copy()
-        custom_layout.update({
-            "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
-            "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
-            "legend": dict(
-                bgcolor=COLOR_SCHEME['background'],
-                bordercolor=COLOR_SCHEME['text'],
-                borderwidth=1,
-                font=dict(color=COLOR_SCHEME['text'])
-            )
-        })
+        # # Create a copy of COMMON_LAYOUT and update it to avoid multiple keyword argument issues
+        # custom_layout = COMMON_LAYOUT.copy()
+        # custom_layout.update({
+        #     "plot_bgcolor": 'rgba(0,0,0,0)',  # Transparent plot background
+        #     "paper_bgcolor": 'rgba(0,0,0,0)',  # Transparent figure background
+        #     "legend": dict(
+        #         bgcolor=COLOR_SCHEME['background'],
+        #         bordercolor=COLOR_SCHEME['text'],
+        #         borderwidth=1,
+        #         font=dict(color=COLOR_SCHEME['text'])
+        #     )
+        # })
 
-        fig_sentiment_pie.update_layout(**custom_layout)
+        # fig_sentiment_pie.update_layout(**custom_layout)
+        # st.plotly_chart(fig_sentiment_pie, use_container_width=True)
+
+        fig_sentiment_pie = create_sentiment_pie(sentiment_counts, theme_colors)
         st.plotly_chart(fig_sentiment_pie, use_container_width=True)
 
         # Correlation Heatmap
@@ -665,51 +672,54 @@ if st.session_state.show_dashboard:
         # Drop all-NaN rows/columns
         df_corr = df_corr.dropna(how="all", axis=0).dropna(how="all", axis=1)
 
-        # Extract correlation values and labels
-        corr_values = df_corr.to_numpy()
-        x_labels = list(df_corr.columns)
-        y_labels = list(df_corr.index)
+        # # Extract correlation values and labels
+        # corr_values = df_corr.to_numpy()
+        # x_labels = list(df_corr.columns)
+        # y_labels = list(df_corr.index)
 
-        fig_corr = ff.create_annotated_heatmap(
-            z=corr_values,
-            x=x_labels,
-            y=y_labels,
-            annotation_text=np.round(corr_values, 2),
-            colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
-            showscale=True,
-            font_colors=['white', 'white']
-        )
+        # fig_corr = ff.create_annotated_heatmap(
+        #     z=corr_values,
+        #     x=x_labels,
+        #     y=y_labels,
+        #     annotation_text=np.round(corr_values, 2),
+        #     colorscale=[[0, COLOR_SCHEME["primary"]], [1, COLOR_SCHEME["secondary"]]],
+        #     showscale=True,
+        #     font_colors=['white', 'white']
+        # )
 
-        # Force background transparency for heatmap
-        fig_corr.update_layout(
-            width =500,
-            height = 500,
-            paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
-            plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
-            xaxis=dict(
-                showgrid=False,
-                zeroline=False,
-                tickfont=dict(color="white", size=16),
-                title_font=dict(color="white"),
-                side= "bottom"
-            ),
-            yaxis=dict(
-                showgrid=False,
-                zeroline=False,
-                tickfont=dict(color="white", size=16),
-                title_font=dict(color="white")
-            ),
-            coloraxis_colorbar=dict(
-                tickfont=dict(color="white", size=16),
-                title_font=dict(color="white")
-            )
-        )
+        # # Force background transparency for heatmap
+        # fig_corr.update_layout(
+        #     width =500,
+        #     height = 500,
+        #     paper_bgcolor='rgba(0,0,0,0)',  # Remove white background
+        #     plot_bgcolor='rgba(0,0,0,0)',  # Ensure transparency
+        #     xaxis=dict(
+        #         showgrid=False,
+        #         zeroline=False,
+        #         tickfont=dict(color="white", size=16),
+        #         title_font=dict(color="white"),
+        #         side= "bottom"
+        #     ),
+        #     yaxis=dict(
+        #         showgrid=False,
+        #         zeroline=False,
+        #         tickfont=dict(color="white", size=16),
+        #         title_font=dict(color="white")
+        #     ),
+        #     coloraxis_colorbar=dict(
+        #         tickfont=dict(color="white", size=16),
+        #         title_font=dict(color="white")
+        #     )
+        # )
 
-        # Update each annotation to ensure they blend well
-        for annotation in fig_corr.layout.annotations:
-            annotation.font.color = "white"
-            annotation.font.size = 16
+        # # Update each annotation to ensure they blend well
+        # for annotation in fig_corr.layout.annotations:
+        #     annotation.font.color = "white"
+        #     annotation.font.size = 16
 
+        # st.plotly_chart(fig_corr, use_container_width=True)
+
+        fig_corr = create_correlation_heatmap(df_corr, theme_colors)
         st.plotly_chart(fig_corr, use_container_width=True)
 
         # Top 10 Topics 
