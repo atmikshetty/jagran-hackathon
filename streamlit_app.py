@@ -276,7 +276,7 @@ df = load_data()
 df = compute_sentiment_and_promotion(df)
 
 # Add the Explore Dashboard button
-if st.button("🚀 Explore Dashboard", type="primary", use_container_width=True):
+if st.button("🚀 Explore Dashboard", type="primary"):
     st.session_state.show_dashboard = True
 
 if st.session_state.show_dashboard:
