@@ -428,8 +428,8 @@ else:
     custom_layout = COMMON_LAYOUT.copy()
 
     fig_corr.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',  # Make plot area transparent
-        paper_bgcolor='rgba(0,0,0,0)',  # Make figure background transparent
+        plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot area
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent figure background
         xaxis=dict(
             tickfont=dict(color="white"),  # X-axis labels in white
             title_font=dict(color="white"),  # X-axis title in white
@@ -448,7 +448,6 @@ else:
 
     fig_corr.update_layout(**custom_layout)
     st.plotly_chart(fig_corr, use_container_width=True)
-
 
     # Sponsored Posts Analysis
     st.subheader("📢 Sponsored Posts Analysis")
